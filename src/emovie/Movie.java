@@ -5,6 +5,8 @@
  */
 package emovie;
 
+import view.MainForm;
+
 /**
  *
  * @author kosta
@@ -16,6 +18,7 @@ public class Movie {
      */
     public static void main(String[] args) {
         // TODO code application logic here
+        MainForm mainWindow = new MainForm();
     }
     
 }
