@@ -10,4 +10,7 @@ Technologies Used:
 * Spring
 
 
+To run the app just make sure you have created a derbyDB with the name **eMovie** and for username and password use **APP**
+
+
 
