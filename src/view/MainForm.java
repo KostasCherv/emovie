@@ -33,7 +33,7 @@ public class MainForm extends javax.swing.JFrame {
         // Διάβασε από το API τα είδη των ταινιών και αποθήκευσε τα στη βάση
         Utils.getMovieGenres();
         // Διάβασε από το API τις ταινίες και αποθήκευσε τις στη βάση
-//        Utils.getMovies();
+        Utils.getMovies();
         
     }
     

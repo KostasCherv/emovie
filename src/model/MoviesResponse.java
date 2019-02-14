@@ -11,10 +11,18 @@ import com.google.gson.annotations.SerializedName;
  *
  * @author kosta
  */
-public class GenresResponse {
-    @SerializedName("genres")
+public class MoviesResponse {
+    @SerializedName("results")
     @Expose
-    public model.Genre[] genres;
+    public model.MovieResponse[] results;
+    
+    @SerializedName("page")
+    @Expose
+    public int page;
+    
+    @SerializedName("total_pages")
+    @Expose
+    public int total_pages;
 }
 
 
