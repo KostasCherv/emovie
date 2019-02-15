@@ -32,10 +32,10 @@ import javax.xml.bind.annotation.XmlRootElement;
 @NamedQueries({
     @NamedQuery(name = "Movie.findAll", query = "SELECT m FROM Movie m"),
     @NamedQuery(name = "Movie.findById", query = "SELECT m FROM Movie m WHERE m.id = :id"),
-    @NamedQuery(name = "Movie.findByTitle", query = "SELECT m FROM Movie m WHERE m.title = :title"),
-    @NamedQuery(name = "Movie.findByReleaseDate", query = "SELECT m FROM Movie m WHERE m.releaseDate = :releaseDate"),
+    @NamedQuery(name = "Movie.findByOverview", query = "SELECT m FROM Movie m WHERE m.overview = :overview"),
     @NamedQuery(name = "Movie.findByRating", query = "SELECT m FROM Movie m WHERE m.rating = :rating"),
-    @NamedQuery(name = "Movie.findByOverview", query = "SELECT m FROM Movie m WHERE m.overview = :overview")})
+    @NamedQuery(name = "Movie.findByReleaseDate", query = "SELECT m FROM Movie m WHERE m.releaseDate = :releaseDate"),
+    @NamedQuery(name = "Movie.findByTitle", query = "SELECT m FROM Movie m WHERE m.title = :title")})
 public class Movie implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
@@ -43,16 +43,16 @@ public class Movie implements Serializable {
     @Basic(optional = false)
     @Column(name = "ID")
     private Integer id;
-    @Column(name = "TITLE")
-    private String title;
-    @Column(name = "RELEASE_DATE")
-    @Temporal(TemporalType.DATE)
-    private Date releaseDate;
+    @Column(name = "OVERVIEW", length = 500)
+    private String overview;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Column(name = "RATING")
     private Double rating;
-    @Column(name = "OVERVIEW")
-    private String overview;
+    @Column(name = "RELEASE_DATE")
+    @Temporal(TemporalType.DATE)
+    private Date releaseDate;
+    @Column(name = "TITLE")
+    private String title;
     @JoinColumn(name = "FAVORITE_LIST_ID", referencedColumnName = "ID")
     @ManyToOne
     private FavoriteList favoriteListId;
@@ -75,20 +75,12 @@ public class Movie implements Serializable {
         this.id = id;
     }
 
-    public String getTitle() {
-        return title;
+    public String getOverview() {
+        return overview;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public Date getReleaseDate() {
-        return releaseDate;
-    }
-
-    public void setReleaseDate(Date releaseDate) {
-        this.releaseDate = releaseDate;
+    public void setOverview(String overview) {
+        this.overview = overview;
     }
 
     public Double getRating() {
@@ -99,12 +91,20 @@ public class Movie implements Serializable {
         this.rating = rating;
     }
 
-    public String getOverview() {
-        return overview;
+    public Date getReleaseDate() {
+        return releaseDate;
     }
 
-    public void setOverview(String overview) {
-        this.overview = overview;
+    public void setReleaseDate(Date releaseDate) {
+        this.releaseDate = releaseDate;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public FavoriteList getFavoriteListId() {
@@ -145,7 +145,7 @@ public class Movie implements Serializable {
 
     @Override
     public String toString() {
-        return "SQL.Movie[ id=" + id + " ]";
+        return "model.Movie[ id=" + id + " ]";
     }
     
 }

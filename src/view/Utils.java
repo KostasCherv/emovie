@@ -130,15 +130,16 @@ public class Utils {
         
         EntityManager em;
         em = MainForm.em;
+        
         for (model.MovieResponse element : movies.results){
             System.out.println(element.title);
             // δημιουργία αντικειμένου κάθε ταινίας
             model.Movie movie = new model.Movie();  
-//            movie.setId(element.id);
+            movie.setId(element.id);
             movie.setTitle(element.title);
             movie.setReleaseDate(element.release_date);
             movie.setRating(element.rating);
-//            movie.setOverview(element.overview);
+            movie.setOverview(element.overview.substring(0, Math.min(element.overview.length(), 500))); // shrink string
             
             for (int id : element.genre_ids) {
                if(genreIds.contains(id)){
@@ -146,10 +147,10 @@ public class Utils {
                    break;
                }
             }
-            // Καταχώσηση δεδομένων για κάθε είδος
+            // Καταχώσηση δεδομένων
             if (!em.getTransaction().isActive()) {
                 em.getTransaction().begin(); //ξεκινάω μια καινούργια 
-                //συναλλαγή για να αποθηκεύσω στη βάση δεδομένων τα 
+                //συναλλαγή για να αποθηκεύσω στη βάση δεδομένων τα δεδομένα
             }
             em.merge(movie);// δημιουργώ τo query εισαγωγής/μεταβολής   
             em.flush();
