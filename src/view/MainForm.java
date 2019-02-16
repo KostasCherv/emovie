@@ -35,6 +35,8 @@ public class MainForm extends javax.swing.JFrame {
         // Διάβασε από το API τις ταινίες και αποθήκευσε τις στη βάση
         Utils.getMovies();
         
+        System.exit(0);
+        
     }
     
      // Η παρακάτω μέθοδος πραγματοποιεί απόπειρα σύνδεσης με την Βάση Δεδομένων
