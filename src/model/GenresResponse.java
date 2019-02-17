@@ -6,6 +6,7 @@
 package model;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import java.util.List;
 
 /**
  *
@@ -14,7 +15,7 @@ import com.google.gson.annotations.SerializedName;
 public class GenresResponse {
     @SerializedName("genres")
     @Expose
-    public model.Genre[] genres;
+    public model.Genre[] genres = null;
 }
 
 

@@ -6,7 +6,7 @@
 package model;
 
 import java.io.Serializable;
-import java.util.Collection;
+import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -38,7 +38,7 @@ public class Genre implements Serializable {
     @Column(name = "NAME")
     private String name;
     @OneToMany(mappedBy = "genreId")
-    private Collection<Movie> movieCollection;
+    private List<Movie> movieList;
 
     public Genre() {
     }
@@ -64,12 +64,12 @@ public class Genre implements Serializable {
     }
 
     @XmlTransient
-    public Collection<Movie> getMovieCollection() {
-        return movieCollection;
+    public List<Movie> getMovieList() {
+        return movieList;
     }
 
-    public void setMovieCollection(Collection<Movie> movieCollection) {
-        this.movieCollection = movieCollection;
+    public void setMovieList(List<Movie> movieList) {
+        this.movieList = movieList;
     }
 
     @Override
@@ -94,7 +94,7 @@ public class Genre implements Serializable {
 
     @Override
     public String toString() {
-        return "model.Genre[ id=" + id + " ]";
+        return "SQL.Genre[ id=" + id + " ]";
     }
     
 }

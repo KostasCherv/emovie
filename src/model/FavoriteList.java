@@ -6,7 +6,7 @@
 package model;
 
 import java.io.Serializable;
-import java.util.Collection;
+import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -41,7 +41,7 @@ public class FavoriteList implements Serializable {
     @Column(name = "NAME")
     private String name;
     @OneToMany(mappedBy = "favoriteListId")
-    private Collection<Movie> movieCollection;
+    private List<Movie> movieList;
 
     public FavoriteList() {
     }
@@ -67,12 +67,12 @@ public class FavoriteList implements Serializable {
     }
 
     @XmlTransient
-    public Collection<Movie> getMovieCollection() {
-        return movieCollection;
+    public List<Movie> getMovieList() {
+        return movieList;
     }
 
-    public void setMovieCollection(Collection<Movie> movieCollection) {
-        this.movieCollection = movieCollection;
+    public void setMovieList(List<Movie> movieList) {
+        this.movieList = movieList;
     }
 
     @Override
@@ -97,7 +97,7 @@ public class FavoriteList implements Serializable {
 
     @Override
     public String toString() {
-        return "model.FavoriteList[ id=" + id + " ]";
+        return "SQL.FavoriteList[ id=" + id + " ]";
     }
     
 }
