@@ -51,7 +51,7 @@ public class Movie implements Serializable {
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Column(name = "RATING")
     private Double rating;
-    @Column(name = "OVERVIEW")
+    @Column(name = "OVERVIEW", length = 500)
     private String overview;
     @JoinColumn(name = "FAVORITE_LIST_ID", referencedColumnName = "ID")
     @ManyToOne

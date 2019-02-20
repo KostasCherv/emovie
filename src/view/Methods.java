@@ -94,4 +94,68 @@ public class Methods {
         }
     }  
     
+    //μέθοδος άντλησης τρέχοντων καιρικών συνθηκών από το api
+    //για όλες τις πόλεις και καταχώρησή τους στη Β.Δ.
+    public static void getMovies() {
+        try {
+            String json;   
+            Gson gson = new GsonBuilder().create();
+            model.MoviesResponse jsonResponse;
+            //σύνδεση με το api και άντληση όλων των ειδών ταινιών
+            String webPage = url + "discover/movie?with_genres=28,878,10749&primary_release_date.gte=2000-01-01";
+            webPage += mainUI.apiKey;
+            json = readFromURL(webPage + "&page=1");
+            //η αποκωδικοποίηση της μορφής του json
+            jsonResponse = gson.fromJson(json, model.MoviesResponse.class);
+            
+            saveMoviesOnDb(jsonResponse);
+            for(int i = 2; i <= jsonResponse.total_pages; i++){
+                json = readFromURL(webPage + "&page=" + i);
+                jsonResponse = gson.fromJson(json, model.MoviesResponse.class);
+                System.out.println(i);
+                saveMoviesOnDb(jsonResponse);
+            }    
+            
+        } catch (Exception ex) {
+            System.err.println("Μη δυνατή η σύνδεση με τo API. error :"
+                    + ex.toString());
+            System.exit(1);
+        }
+    }
+    
+    //για κάθε στοιχείο λίστα του json άνληση δεδομένων 
+    //και αποθήκευση στην Β.Δ.
+    public static void saveMoviesOnDb(model.MoviesResponse movies){
+        List<Integer> genreIds = new ArrayList<>(Arrays.asList(28, 10749, 878));
+        
+        EntityManager em;
+        em = mainUI.em;
+        
+        for (model.MovieResponse element : movies.results){
+            System.out.println(element.title);
+            // δημιουργία αντικειμένου κάθε ταινίας
+            model.Movie movie = new model.Movie();  
+            movie.setId(element.id);
+            movie.setTitle(element.title);
+            movie.setReleaseDate(element.release_date);
+            movie.setRating(element.rating);
+            movie.setOverview(element.overview.substring(0, Math.min(element.overview.length(), 500))); // shrink string
+            
+            for (int id : element.genre_ids) {
+               if(genreIds.contains(id)){
+                   movie.setGenreId(em.getReference(model.Genre.class, id));
+                   break;
+               }
+            }
+            // Καταχώσηση δεδομένων
+            if (!em.getTransaction().isActive()) {
+                em.getTransaction().begin(); //ξεκινάω μια καινούργια 
+                //συναλλαγή για να αποθηκεύσω στη βάση δεδομένων τα δεδομένα
+            }
+            em.merge(movie);// δημιουργώ τo query εισαγωγής/μεταβολής   
+            em.flush();
+            em.getTransaction().commit();// τέλος συναλλαγής
+    }   
+  }
+    
 }
