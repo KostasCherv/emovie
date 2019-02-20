@@ -43,9 +43,9 @@ public class mainUI extends javax.swing.JFrame {
         // Σύνδεση με την βάση δεδομένων
         connectToDb();
         // Διάβασε από το API τα είδη των ταινιών και αποθήκευσε τα στη βάση
-        Methods.getMovieGenres();
+//        Methods.getMovieGenres();
         // Διάβασε από το API τις ταινίες και αποθήκευσε τις στη βάση        
-        Methods.getMovies();
+//        Methods.getMovies();
         //Επιβεβαίωση τερματισμού της εφαρμογής
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent we) {
@@ -77,6 +77,11 @@ public class mainUI extends javax.swing.JFrame {
         setResizable(false);
 
         jButton1.setText("Ανάκτηση Δεδομένων");
+        jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jButton1MouseClicked(evt);
+            }
+        });
 
         jButton2.setText("Οι λίστες μου");
         jButton2.addActionListener(new java.awt.event.ActionListener() {
@@ -106,7 +111,7 @@ public class mainUI extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(50, 50, 50)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, 86, Short.MAX_VALUE)
+                    .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 86, Short.MAX_VALUE)
                     .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(77, 77, 77)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -179,6 +184,15 @@ public class mainUI extends javax.swing.JFrame {
     private void statisticsButton(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_statisticsButton
         statistics.setVisible(true);  
     }//GEN-LAST:event_statisticsButton
+
+    private void jButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MouseClicked
+        // Διαγραφή των δεδομένων που υπάρχουν στους πίνακες
+       Methods.deleteDataFromTables();
+        // Διάβασε από το API τα είδη των ταινιών και αποθήκευσε τα στη βάση
+        Methods.getMovieGenres();
+        // Διάβασε από το API τις ταινίες και αποθήκευσε τις στη βάση        
+        Methods.getMovies();
+    }//GEN-LAST:event_jButton1MouseClicked
 
 
 

@@ -91,6 +91,9 @@
           <Properties>
             <Property name="text" type="java.lang.String" value="&#x391;&#x3bd;&#x3ac;&#x3ba;&#x3c4;&#x3b7;&#x3c3;&#x3b7; &#x394;&#x3b5;&#x3b4;&#x3bf;&#x3bc;&#x3ad;&#x3bd;&#x3c9;&#x3bd;"/>
           </Properties>
+          <Events>
+            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jButton1MouseClicked"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JButton" name="jButton2">
           <Properties>

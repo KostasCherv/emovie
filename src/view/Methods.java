@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import static view.mainUI.url;
 
 /**
@@ -87,6 +88,7 @@ public class Methods {
                     em.getTransaction().commit();// τέλος συναλλαγής
                 }   
             };
+            System.out.println("Genders Fetched and Saved");
         } catch (Exception ex) {
             System.err.println("Μη δυνατή η σύνδεση με τo API. error :"
                     + ex.toString());
@@ -112,10 +114,9 @@ public class Methods {
             for(int i = 2; i <= jsonResponse.total_pages; i++){
                 json = readFromURL(webPage + "&page=" + i);
                 jsonResponse = gson.fromJson(json, model.MoviesResponse.class);
-                System.out.println(i);
                 saveMoviesOnDb(jsonResponse);
             }    
-            
+            System.out.println("Movies Fetched and Saved");
         } catch (Exception ex) {
             System.err.println("Μη δυνατή η σύνδεση με τo API. error :"
                     + ex.toString());
@@ -132,7 +133,6 @@ public class Methods {
         em = mainUI.em;
         
         for (model.MovieResponse element : movies.results){
-            System.out.println(element.title);
             // δημιουργία αντικειμένου κάθε ταινίας
             model.Movie movie = new model.Movie();  
             movie.setId(element.id);
@@ -157,5 +157,36 @@ public class Methods {
             em.getTransaction().commit();// τέλος συναλλαγής
     }   
   }
+    
+  //μέθοδος διαφραφής δεδομένων πινάκων 
+    public static void deleteDataFromTables() {
+        try {
+            EntityManager em;
+            em = mainUI.em;
+            
+            if (!em.getTransaction().isActive()) {
+                em.getTransaction().begin(); //ξεκινάω μια καινούργια 
+                //συναλλαγή για να αποθηκεύσω στη βάση δεδομένων τα δεδομένα
+            }
+            
+            Query q1 = em.createNativeQuery("DELETE FROM MOVIE");
+            q1.executeUpdate();
+         
+            Query q2 = em.createNativeQuery("DELETE FROM GENRE");
+            q2.executeUpdate();
+            
+            Query q3 = em.createNativeQuery("DELETE FROM FAVORITE_LIST");
+            q3.executeUpdate();
+            
+            em.flush();
+            em.getTransaction().commit();// τέλος συναλλαγής
+            
+            System.out.println("Tables Data deleted");
+        } catch (Exception ex) {
+            System.err.println("Μη δυνατή η διαγραφη των πινάκων. error :" + ex.toString());
+            System.exit(1);
+        }
+    }    
+    
     
 }
