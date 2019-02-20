@@ -30,6 +30,10 @@ public class mainUI extends javax.swing.JFrame {
     public final static String apiKey = "&api_key=5b0b2dc0ebd5b3f8f87d1d5222304db2";
     private EntityManagerFactory emf; // Το EntityManagerFactory
     public static EntityManager em; // Ο EntityManager 
+   
+    /**
+     * Creates new form MainForm
+     */
     
     public mainUI() {
         
@@ -40,18 +44,14 @@ public class mainUI extends javax.swing.JFrame {
         connectToDb();
         // Διάβασε από το API τα είδη των ταινιών και αποθήκευσε τα στη βάση
         Methods.getMovieGenres();
-        // Διάβασε από το API τις ταινίες και αποθήκευσε τις στη βάση
-         //        Utils.getMovies();
-        
-        
-               //Επιβεβαίωση τερματισμού της εφαρμογής
-                    addWindowListener(new WindowAdapter() 
-                 {
-                    public void windowClosing(WindowEvent we) 
-                   {
-                        closeWindowPrompt();
-                   }
-                  });
+        // Διάβασε από το API τις ταινίες και αποθήκευσε τις στη βάση        
+        Methods.getMovies();
+        //Επιβεβαίωση τερματισμού της εφαρμογής
+        addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent we) {
+                closeWindowPrompt();
+           }
+        });
         
            
     }
