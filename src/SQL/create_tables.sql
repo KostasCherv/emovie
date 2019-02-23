@@ -19,7 +19,7 @@ CREATE TABLE MOVIE(
     overview varchar(500),
     genre_id integer,
     favorite_list_id integer ,
-    FOREIGN KEY(genre_id) REFERENCES GENRE(id) ON DELETE CASCADE,
-    FOREIGN KEY(favorite_list_id) REFERENCES FAVORITE_LIST(id) ON DELETE CASCADE,
+    FOREIGN KEY(genre_id) REFERENCES GENRE(id),
+    FOREIGN KEY(favorite_list_id) REFERENCES FAVORITE_LIST(id),
     PRIMARY KEY (id)
 );
