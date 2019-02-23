@@ -11,7 +11,7 @@ import view.mainUI;
  *
  * @author kosta
  */
-public class Movie {
+public class eMovie {
 
     /**
      * @param args the command line arguments

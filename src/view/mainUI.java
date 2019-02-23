@@ -187,7 +187,7 @@ public class mainUI extends javax.swing.JFrame {
 
     private void jButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MouseClicked
         // Διαγραφή των δεδομένων που υπάρχουν στους πίνακες
-       Methods.deleteDataFromTables();
+        Methods.deleteDataFromTables();
         // Διάβασε από το API τα είδη των ταινιών και αποθήκευσε τα στη βάση
         Methods.getMovieGenres();
         // Διάβασε από το API τις ταινίες και αποθήκευσε τις στη βάση        
