@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import javax.persistence.EntityManager;
-import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 import static view.mainUI.url;
 
 /**
@@ -65,10 +65,14 @@ public class Methods {
             String webPage = url + "genre/movie/list?";
             webPage += mainUI.apiKey;
             json = readFromURL(webPage);
-            
+
             //η αποκωδικοποίηση της μορφής του json
             jsonResponse = gson.fromJson(json, model.GenresResponse.class);
-
+            // Καταχώσηση δεδομένων για κάθε είδος
+            if (!em.getTransaction().isActive()) {
+                em.getTransaction().begin(); //ξεκινάω μια καινούργια 
+                //συναλλαγή για να αποθηκεύσω στη βάση δεδομένων τα 
+            }
             //για κάθε στοιχείο λίστα του json άνληση δεδομένων 
             //και αποθήκευση στην Β.Δ.
             for (model.Genre element : jsonResponse.genres){
@@ -77,20 +81,16 @@ public class Methods {
                     model.Genre genre = new model.Genre();  
                     genre.setId(element.getId());
                     genre.setName(element.getName());
-                    // Καταχώσηση δεδομένων για κάθε είδος
-                    if (!em.getTransaction().isActive()) {
-                        em.getTransaction().begin(); //ξεκινάω μια καινούργια 
-                        //συναλλαγή για να αποθηκεύσω στη βάση δεδομένων τα 
-                        //αντικείμενα cw, cwPK
-                    }
+                   
                     em.merge(genre);// δημιουργώ τo query εισαγωγής/μεταβολής για το cw        
-                    em.flush();
-                    em.getTransaction().commit();// τέλος συναλλαγής
+                    
                 }   
             };
+            em.flush();
+            em.getTransaction().commit();// τέλος συναλλαγής
             System.out.println("Genders Fetched and Saved");
         } catch (Exception ex) {
-            System.err.println("Μη δυνατή η σύνδεση με τo API. error :"
+            System.err.println("Αδυναμία αποθήκευσης είδη ταινιών. error :"
                     + ex.toString());
             System.exit(1);
         }
@@ -118,7 +118,7 @@ public class Methods {
             }    
             System.out.println("Movies Fetched and Saved");
         } catch (Exception ex) {
-            System.err.println("Μη δυνατή η σύνδεση με τo API. error :"
+            System.err.println("Αδυμανία αποθήκευσης ταινιών. error :"
                     + ex.toString());
             System.exit(1);
         }
@@ -131,7 +131,11 @@ public class Methods {
         
         EntityManager em;
         em = mainUI.em;
-        
+    // Καταχώσηση δεδομένων
+        if (!em.getTransaction().isActive()) {
+            em.getTransaction().begin(); //ξεκινάω μια καινούργια 
+            //συναλλαγή για να αποθηκεύσω στη βάση δεδομένων τα δεδομένα
+        }
         for (model.MovieResponse element : movies.results){
             // δημιουργία αντικειμένου κάθε ταινίας
             model.Movie movie = new model.Movie();  
@@ -140,22 +144,19 @@ public class Methods {
             movie.setReleaseDate(element.release_date);
             movie.setRating(element.rating);
             movie.setOverview(element.overview.substring(0, Math.min(element.overview.length(), 500))); // shrink string
-            
+
             for (int id : element.genre_ids) {
                if(genreIds.contains(id)){
                    movie.setGenreId(em.getReference(model.Genre.class, id));
                    break;
                }
             }
-            // Καταχώσηση δεδομένων
-            if (!em.getTransaction().isActive()) {
-                em.getTransaction().begin(); //ξεκινάω μια καινούργια 
-                //συναλλαγή για να αποθηκεύσω στη βάση δεδομένων τα δεδομένα
-            }
+            
             em.merge(movie);// δημιουργώ τo query εισαγωγής/μεταβολής   
-            em.flush();
-            em.getTransaction().commit();// τέλος συναλλαγής
-    }   
+        }  
+        em.flush();
+        em.getTransaction().commit();// τέλος συναλλαγής
+
   }
     
   //μέθοδος διαφραφής δεδομένων πινάκων 
@@ -163,24 +164,35 @@ public class Methods {
         try {
             EntityManager em;
             em = mainUI.em;
-            
+
             if (!em.getTransaction().isActive()) {
                 em.getTransaction().begin(); //ξεκινάω μια καινούργια 
                 //συναλλαγή για να αποθηκεύσω στη βάση δεδομένων τα δεδομένα
             }
             
-            Query q1 = em.createNativeQuery("DELETE FROM MOVIE");
-            q1.executeUpdate();
-         
-            Query q2 = em.createNativeQuery("DELETE FROM GENRE");
-            q2.executeUpdate();
+            // Διαγραγή των ταινιών από τη βάση και από τον Entity Manager
+            TypedQuery<model.Movie> movieQuery = em.createNamedQuery("Movie.findAll", model.Movie.class);
+            List<model.Movie> movieResults = movieQuery.getResultList();
+            for(model.Movie t: movieResults){
+                em.remove(t);
+            }
             
-            Query q3 = em.createNativeQuery("DELETE FROM FAVORITE_LIST");
-            q3.executeUpdate();
+            // Διαγραγή των ειδών από τη βάση και από τον Entity Manager
+            TypedQuery<model.Genre> genreQuery = em.createNamedQuery("Genre.findAll", model.Genre.class);
+            List<model.Genre> genreResults = genreQuery.getResultList();
+            for(model.Genre t: genreResults){
+                em.remove(t);
+            }
             
-            em.flush();
+            // Διαγραγή των αγαπημένων λιστών από τη βάση και από τον Entity Manager
+            TypedQuery<model.FavoriteList> favListQuery = em.createNamedQuery("FavoriteList.findAll", model.FavoriteList.class);
+            List<model.FavoriteList> favListResults = favListQuery.getResultList();
+            for(model.FavoriteList t: favListResults){
+                em.remove(t);
+            }
+            
             em.getTransaction().commit();// τέλος συναλλαγής
-            
+
             System.out.println("Tables Data deleted");
         } catch (Exception ex) {
             System.err.println("Μη δυνατή η διαγραφη των πινάκων. error :" + ex.toString());
