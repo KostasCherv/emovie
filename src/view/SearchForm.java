@@ -66,6 +66,13 @@ public class SearchForm extends javax.swing.JFrame {
         jTable1 = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        addWindowFocusListener(new java.awt.event.WindowFocusListener() {
+            public void windowGainedFocus(java.awt.event.WindowEvent evt) {
+                formWindowGainedFocus(evt);
+            }
+            public void windowLostFocus(java.awt.event.WindowEvent evt) {
+            }
+        });
 
         jComboBox1.setRenderer(new DefaultListCellRenderer() {
             @Override
@@ -231,6 +238,10 @@ public class SearchForm extends javax.swing.JFrame {
         // TODO add your handling code here:
         setSearchButtonStatus();
     }//GEN-LAST:event_jComboBox1MouseClicked
+
+    private void formWindowGainedFocus(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowGainedFocus
+        // TODO add your handling code here:
+    }//GEN-LAST:event_formWindowGainedFocus
 
     private void setSearchButtonStatus(){
         if(jTextField1.getText().isEmpty()){

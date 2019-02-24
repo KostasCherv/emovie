@@ -5,11 +5,8 @@
  */
 package view;
 
-import java.util.List;
 import javax.persistence.EntityManager;
-import javax.persistence.Query;
-import javax.swing.DefaultListModel;
-import javax.swing.JList;
+import javax.swing.JOptionPane;
 import model.FavoriteList;
 
 
@@ -18,15 +15,10 @@ import model.FavoriteList;
  * @author rodius
  */
 public class ListManager extends javax.swing.JFrame {
-
-    private final ListCreate listCreate = new ListCreate();
-    private final EditList editList = new EditList();
-    private final DeleteList deleteList = new DeleteList();
     /**
      * Creates new form ListManager
      */
     public ListManager() {
-        em = mainUI.em;
         initComponents();
         this.setLocationRelativeTo(null);
     }
@@ -52,6 +44,13 @@ public class ListManager extends javax.swing.JFrame {
         ListOfLists = new javax.swing.JList<String>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        addWindowFocusListener(new java.awt.event.WindowFocusListener() {
+            public void windowGainedFocus(java.awt.event.WindowEvent evt) {
+                formWindowGainedFocus(evt);
+            }
+            public void windowLostFocus(java.awt.event.WindowEvent evt) {
+            }
+        });
 
         CreateButton.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         CreateButton.setText("Δημιουργία");
@@ -81,6 +80,11 @@ public class ListManager extends javax.swing.JFrame {
         jListBinding.setDetailBinding(org.jdesktop.beansbinding.ELProperty.create("${name}"));
         bindingGroup.addBinding(jListBinding);
 
+        ListOfLists.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                ListOfListsMouseClicked(evt);
+            }
+        });
         jScrollPane2.setViewportView(ListOfLists);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -138,32 +142,112 @@ public class ListManager extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
     
     private void DeleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DeleteButtonActionPerformed
-        deleteList.setVisible(true);  
+        int i = ListOfLists.getSelectedIndex();
+        if(i == -1){
+            return;
+        }
+        String name = ListOfLists.getModel().getElementAt(i);
+        int result = JOptionPane.showConfirmDialog(null, "Διαγραφή της λίστας " + name,
+                "Confirm",
+                JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+        System.out.println(result);
+        if(result != 0){
+            return;
+        }
+        EntityManager em = mainUI.em;
+        em.getTransaction().begin();
+        FavoriteList fl = em
+                .createNamedQuery("FavoriteList.findByName", FavoriteList.class)
+                .setParameter("name", name)
+                .getSingleResult();
+        if(fl == null){
+            return;
+        }     
+        em.remove(fl);
+        em.flush();
+        em.getTransaction().commit();
+        updateListData();
+        System.out.println("Delete");
     }//GEN-LAST:event_DeleteButtonActionPerformed
 
     private void CreateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CreateButtonActionPerformed
-        listCreate.setVisible(true);  
+        String listName = JOptionPane.showInputDialog("Δώσε το όνομα της λίστας:" );
+        if(listName == null){
+            return;
+        }
+        EntityManager em = mainUI.em; // Ο EntityManager
+
+        em.getTransaction().begin(); //ξεκινάω μια καινούργια 
+
+        model.FavoriteList newList = new model.FavoriteList();
+
+        newList.setName(listName);    
+
+        em.persist(newList);
+        em.flush();
+        em.getTransaction().commit(); //Αποθήκευση στη βάση των αλλαγών
+
+        System.out.println("New List successfully created!");
+        System.out.println(listName); 
+        updateListData();
     }//GEN-LAST:event_CreateButtonActionPerformed
 
     private void EditButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_EditButtonActionPerformed
-        editList.setVisible(true);  
+        int i = ListOfLists.getSelectedIndex();
+        if(i == -1){
+            return;
+        }
+        String name = ListOfLists.getModel().getElementAt(i);
+        String newName = JOptionPane.showInputDialog("Δώσε το όνομα της λίστας:", name);
+        if(newName == null){
+            return;
+        }
+        em.getTransaction().begin();
+        FavoriteList fl = em
+                .createNamedQuery("FavoriteList.findByName", FavoriteList.class)
+                .setParameter("name", name)
+                .getSingleResult();
+        if(fl == null){
+            System.out.println("Not Found list");
+            return;
+        }
+        FavoriteList editedFl = em.find(FavoriteList.class, fl.getId());
+        editedFl.setName(newName);
+        em.merge(editedFl);
+        System.out.println(editedFl.getName());
+
+        em.getTransaction().commit(); //Αποθήκευση στη βάση των αλλαγών
+        System.out.println("List successfully updated!");
+//        System.out.println(newName);
+        updateListData();          
     }//GEN-LAST:event_EditButtonActionPerformed
+
+    private void ListOfListsMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ListOfListsMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_ListOfListsMouseClicked
+
+    private void formWindowGainedFocus(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowGainedFocus
+        // TODO add your handling code here:
+        updateListData();
+        System.out.println("in");
+    }//GEN-LAST:event_formWindowGainedFocus
     
     public void updateListData(){
         EntityManager em = mainUI.em;
         em.getTransaction().begin();
         favoriteListList = em
-                    .createQuery("Select f from FavoriteList f", FavoriteList.class)
+                    .createNamedQuery("FavoriteList.findAll", FavoriteList.class)
                     .getResultList();
         em.getTransaction().commit();
+        
         String[] arr = new String[favoriteListList.size()];
 
         for(int i = 0; i < favoriteListList.size(); i++){
             arr[i] = favoriteListList.get(i).getName();
+            System.out.println(arr[i]);
         }
-
         ListOfLists.setListData(arr);
-        System.out.println(favoriteListList);
+//        System.out.println(ListOfLists.getModel().getSize());
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton CreateButton;
