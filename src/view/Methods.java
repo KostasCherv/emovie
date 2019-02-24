@@ -7,6 +7,7 @@ package view;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import java.awt.Component;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -17,6 +18,7 @@ import java.util.Arrays;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
+import javax.swing.JOptionPane;
 import static view.mainUI.url;
 
 /**
@@ -117,6 +119,8 @@ public class Methods {
                 saveMoviesOnDb(jsonResponse);
             }    
             System.out.println("Movies Fetched and Saved");
+            Component frame = null;
+            JOptionPane.showMessageDialog(frame, "Η ανάκτηση των δεδομένων ολοκληρώθηκε.");
         } catch (Exception ex) {
             System.err.println("Αδυμανία αποθήκευσης ταινιών. error :"
                     + ex.toString());

@@ -10,6 +10,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import model.FavoriteList;
 
 /**
  *
@@ -42,7 +43,6 @@ public class mainUI extends javax.swing.JFrame {
         
         // Σύνδεση με την βάση δεδομένων
         connectToDb();
-        
         //Επιβεβαίωση τερματισμού της εφαρμογής
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent we) {
