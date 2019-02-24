@@ -143,6 +143,7 @@ public class SearchForm extends javax.swing.JFrame {
         // TODO add your handling code here:
         jTextField1.setText("");
         jComboBox1.setSelectedIndex(0);
+        jButton1.setEnabled(false);
         System.out.println("clear");
     }//GEN-LAST:event_jButton2MouseClicked
 

@@ -107,10 +107,7 @@ public class ListCreate extends javax.swing.JFrame {
     private void SaveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SaveButtonActionPerformed
        EntityManager em = mainUI.em; // Ο EntityManager
 
-        if (!em.getTransaction().isActive()) {
-            em.getTransaction().begin(); //ξεκινάω μια καινούργια 
-            //συναλλαγή για να αποθηκεύσω στη βάση δεδομένων τα 
-        }
+       em.getTransaction().begin(); //ξεκινάω μια καινούργια 
        
        model.FavoriteList newList = new model.FavoriteList();
        
