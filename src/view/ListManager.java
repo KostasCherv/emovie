@@ -24,6 +24,8 @@ public class ListManager extends javax.swing.JFrame {
     public ListManager() {
         initComponents();
         this.setLocationRelativeTo(null);
+        EditButton.setEnabled(false);
+        DeleteButton.setEnabled(false);
     }
 
     /**
@@ -152,7 +154,7 @@ public class ListManager extends javax.swing.JFrame {
         }
         
         for(int i : selectedValues){
-            deleteFavoriteList(i);
+            deleteFavoriteList(i);      
         }
         
     }//GEN-LAST:event_DeleteButtonActionPerformed
@@ -224,11 +226,13 @@ public class ListManager extends javax.swing.JFrame {
 
     private void ListOfListsMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ListOfListsMouseClicked
         // TODO add your handling code here:
+        setButtonsStatus();
     }//GEN-LAST:event_ListOfListsMouseClicked
 
     private void formWindowGainedFocus(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowGainedFocus
         // TODO add your handling code here:
         updateListData();
+        setButtonsStatus();
     }//GEN-LAST:event_formWindowGainedFocus
     
     public void updateListData(){
@@ -272,6 +276,17 @@ public class ListManager extends javax.swing.JFrame {
         em.flush();
         em.getTransaction().commit();
         System.out.println("List successfully deleted:" + name);
+    }
+    
+    public void setButtonsStatus(){
+        int i = ListOfLists.getSelectedIndex();
+        if(i == -1){
+            EditButton.setEnabled(false);
+            DeleteButton.setEnabled(false);
+            return;
+        }
+        EditButton.setEnabled(true);
+        DeleteButton.setEnabled(true);
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton CreateButton;
