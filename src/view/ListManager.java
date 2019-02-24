@@ -22,13 +22,11 @@ public class ListManager extends javax.swing.JFrame {
     private final ListCreate listCreate = new ListCreate();
     private final EditList editList = new EditList();
     private final DeleteList deleteList = new DeleteList();
-    
-    
-    
     /**
      * Creates new form ListManager
      */
     public ListManager() {
+        em = mainUI.em;
         initComponents();
         this.setLocationRelativeTo(null);
     }
@@ -43,8 +41,8 @@ public class ListManager extends javax.swing.JFrame {
     private void initComponents() {
         bindingGroup = new org.jdesktop.beansbinding.BindingGroup();
 
-        eMoviePUEntityManager0 = java.beans.Beans.isDesignTime() ? null : javax.persistence.Persistence.createEntityManagerFactory("eMoviePU").createEntityManager();
-        favoriteListQuery = java.beans.Beans.isDesignTime() ? null : eMoviePUEntityManager0.createQuery("SELECT f FROM FavoriteList f");
+        em = java.beans.Beans.isDesignTime() ? null : javax.persistence.Persistence.createEntityManagerFactory("eMoviePU").createEntityManager();
+        favoriteListQuery = java.beans.Beans.isDesignTime() ? null : em.createQuery("SELECT f FROM FavoriteList f");
         favoriteListList = java.beans.Beans.isDesignTime() ? java.util.Collections.emptyList() : favoriteListQuery.getResultList();
         jPanel1 = new javax.swing.JPanel();
         CreateButton = new javax.swing.JButton();
@@ -172,7 +170,7 @@ public class ListManager extends javax.swing.JFrame {
     private javax.swing.JButton DeleteButton;
     private javax.swing.JButton EditButton;
     private javax.swing.JList<String> ListOfLists;
-    private javax.persistence.EntityManager eMoviePUEntityManager0;
+    private javax.persistence.EntityManager em;
     private java.util.List<model.FavoriteList> favoriteListList;
     private javax.persistence.Query favoriteListQuery;
     private javax.swing.JPanel jPanel1;

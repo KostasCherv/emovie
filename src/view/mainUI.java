@@ -1,6 +1,7 @@
 
 package view;
 
+import java.awt.Component;
 import static java.awt.SystemColor.desktop;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -40,17 +41,9 @@ public class mainUI extends javax.swing.JFrame {
         
         initComponents();
         this.setLocationRelativeTo(null);
-        
+       
         // Σύνδεση με την βάση δεδομένων
         connectToDb();
-        //Επιβεβαίωση τερματισμού της εφαρμογής
-        addWindowListener(new WindowAdapter() {
-            public void windowClosing(WindowEvent we) {
-                closeWindowPrompt();
-           }
-        });
-        
-           
     }
 
     /**
@@ -189,6 +182,8 @@ public class mainUI extends javax.swing.JFrame {
         Methods.getMovieGenres();
         // Διάβασε από το API τις ταινίες και αποθήκευσε τις στη βάση        
         Methods.getMovies();
+        Component frame = null;
+        JOptionPane.showMessageDialog(frame, "Η ανάκτηση των δεδομένων ολοκληρώθηκε.");
     }//GEN-LAST:event_jButton1MouseClicked
 
 

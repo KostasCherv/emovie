@@ -5,6 +5,8 @@
  */
 package model;
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.Basic;
@@ -18,6 +20,7 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -35,6 +38,8 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "Movie.findByRating", query = "SELECT m FROM Movie m WHERE m.rating = :rating"),
     @NamedQuery(name = "Movie.findByOverview", query = "SELECT m FROM Movie m WHERE m.overview = :overview")})
 public class Movie implements Serializable {
+    @Transient
+    private PropertyChangeSupport changeSupport = new PropertyChangeSupport(this);
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
@@ -69,7 +74,9 @@ public class Movie implements Serializable {
     }
 
     public void setId(Integer id) {
+        Integer oldId = this.id;
         this.id = id;
+        changeSupport.firePropertyChange("id", oldId, id);
     }
 
     public String getTitle() {
@@ -77,7 +84,9 @@ public class Movie implements Serializable {
     }
 
     public void setTitle(String title) {
+        String oldTitle = this.title;
         this.title = title;
+        changeSupport.firePropertyChange("title", oldTitle, title);
     }
 
     public Date getReleaseDate() {
@@ -85,7 +94,9 @@ public class Movie implements Serializable {
     }
 
     public void setReleaseDate(Date releaseDate) {
+        Date oldReleaseDate = this.releaseDate;
         this.releaseDate = releaseDate;
+        changeSupport.firePropertyChange("releaseDate", oldReleaseDate, releaseDate);
     }
 
     public Double getRating() {
@@ -93,7 +104,9 @@ public class Movie implements Serializable {
     }
 
     public void setRating(Double rating) {
+        Double oldRating = this.rating;
         this.rating = rating;
+        changeSupport.firePropertyChange("rating", oldRating, rating);
     }
 
     public String getOverview() {
@@ -101,7 +114,9 @@ public class Movie implements Serializable {
     }
 
     public void setOverview(String overview) {
+        String oldOverview = this.overview;
         this.overview = overview;
+        changeSupport.firePropertyChange("overview", oldOverview, overview);
     }
 
     public FavoriteList getFavoriteListId() {
@@ -109,7 +124,9 @@ public class Movie implements Serializable {
     }
 
     public void setFavoriteListId(FavoriteList favoriteListId) {
+        FavoriteList oldFavoriteListId = this.favoriteListId;
         this.favoriteListId = favoriteListId;
+        changeSupport.firePropertyChange("favoriteListId", oldFavoriteListId, favoriteListId);
     }
 
     public Genre getGenreId() {
@@ -117,7 +134,9 @@ public class Movie implements Serializable {
     }
 
     public void setGenreId(Genre genreId) {
+        Genre oldGenreId = this.genreId;
         this.genreId = genreId;
+        changeSupport.firePropertyChange("genreId", oldGenreId, genreId);
     }
 
     @Override
@@ -143,6 +162,14 @@ public class Movie implements Serializable {
     @Override
     public String toString() {
         return "model.Movie[ id=" + id + " ]";
+    }
+
+    public void addPropertyChangeListener(PropertyChangeListener listener) {
+        changeSupport.addPropertyChangeListener(listener);
+    }
+
+    public void removePropertyChangeListener(PropertyChangeListener listener) {
+        changeSupport.removePropertyChangeListener(listener);
     }
     
 }
