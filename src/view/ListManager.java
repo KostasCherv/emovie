@@ -6,7 +6,10 @@
 package view;
 
 import javax.persistence.EntityManager;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 import model.FavoriteList;
 
 
@@ -147,27 +150,29 @@ public class ListManager extends javax.swing.JFrame {
             return;
         }
         String name = ListOfLists.getModel().getElementAt(i);
-        int result = JOptionPane.showConfirmDialog(null, "Διαγραφή της λίστας " + name,
-                "Confirm",
-                JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-        System.out.println(result);
+        int result = JOptionPane.showOptionDialog(null, "Διαγραφή της λίστας " + name, "Confirm",
+                    JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null,
+                    new String[]{"Οκ", "Ακύρωση"}, "Οκ");
+
+        // Έλεγχος για την απάντηση επιβεβαίωσης
         if(result != 0){
             return;
         }
+        
         EntityManager em = mainUI.em;
         em.getTransaction().begin();
         FavoriteList fl = em
                 .createNamedQuery("FavoriteList.findByName", FavoriteList.class)
                 .setParameter("name", name)
                 .getSingleResult();
+        
         if(fl == null){
             return;
         }     
         em.remove(fl);
         em.flush();
         em.getTransaction().commit();
-        updateListData();
-        System.out.println("Delete");
+        System.out.println("List successfully deleted:" + name);
     }//GEN-LAST:event_DeleteButtonActionPerformed
 
     private void CreateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CreateButtonActionPerformed
@@ -177,7 +182,7 @@ public class ListManager extends javax.swing.JFrame {
         }
         EntityManager em = mainUI.em; // Ο EntityManager
 
-        em.getTransaction().begin(); //ξεκινάω μια καινούργια 
+        em.getTransaction().begin(); //ξεκινάω μια καινούργια συναλλαγή
 
         model.FavoriteList newList = new model.FavoriteList();
 
@@ -187,9 +192,7 @@ public class ListManager extends javax.swing.JFrame {
         em.flush();
         em.getTransaction().commit(); //Αποθήκευση στη βάση των αλλαγών
 
-        System.out.println("New List successfully created!");
-        System.out.println(listName); 
-        updateListData();
+        System.out.println("New List successfully created: " + listName);
     }//GEN-LAST:event_CreateButtonActionPerformed
 
     private void EditButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_EditButtonActionPerformed
@@ -198,7 +201,23 @@ public class ListManager extends javax.swing.JFrame {
             return;
         }
         String name = ListOfLists.getModel().getElementAt(i);
-        String newName = JOptionPane.showInputDialog("Δώσε το όνομα της λίστας:", name);
+        
+        Object[] options = {"Αποθήκευση", "Ακύρωση"};
+
+        JPanel panel = new JPanel();
+        panel.add(new JLabel("Δώσε το όνομα της λίστας:"));
+        JTextField textField = new JTextField(10);
+        textField.setText(name);
+        panel.add(textField);
+
+        int result = JOptionPane.showOptionDialog(null, panel, "",
+                JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE,
+                null, options, null);
+        if(result != 0){
+            return;
+        }
+        
+        String newName = textField.getText();
         if(newName == null){
             return;
         }
@@ -216,11 +235,9 @@ public class ListManager extends javax.swing.JFrame {
         FavoriteList editedFl = em.find(FavoriteList.class, fl.getId());
         editedFl.setName(newName);
         em.merge(editedFl);
-        System.out.println(editedFl.getName());
 
         em.getTransaction().commit(); //Αποθήκευση στη βάση των αλλαγών
         System.out.println("List successfully updated to " + newName);
-        updateListData();          
     }//GEN-LAST:event_EditButtonActionPerformed
 
     private void ListOfListsMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ListOfListsMouseClicked
@@ -246,7 +263,6 @@ public class ListManager extends javax.swing.JFrame {
             arr[i] = favoriteListList.get(i).getName();
         }
         ListOfLists.setListData(arr);
-//        System.out.println(ListOfLists.getModel().getSize());
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton CreateButton;
