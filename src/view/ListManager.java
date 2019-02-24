@@ -145,34 +145,16 @@ public class ListManager extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
     
     private void DeleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DeleteButtonActionPerformed
-        int i = ListOfLists.getSelectedIndex();
-        if(i == -1){
-            return;
-        }
-        String name = ListOfLists.getModel().getElementAt(i);
-        int result = JOptionPane.showOptionDialog(null, "Διαγραφή της λίστας " + name, "Confirm",
-                    JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null,
-                    new String[]{"Οκ", "Ακύρωση"}, "Οκ");
-
-        // Έλεγχος για την απάντηση επιβεβαίωσης
-        if(result != 0){
+        int[] selectedValues = ListOfLists.getSelectedIndices();
+        
+        if(selectedValues.length == 0){
             return;
         }
         
-        EntityManager em = mainUI.em;
-        em.getTransaction().begin();
-        FavoriteList fl = em
-                .createNamedQuery("FavoriteList.findByName", FavoriteList.class)
-                .setParameter("name", name)
-                .getSingleResult();
+        for(int i : selectedValues){
+            deleteFavoriteList(i);
+        }
         
-        if(fl == null){
-            return;
-        }     
-        em.remove(fl);
-        em.flush();
-        em.getTransaction().commit();
-        System.out.println("List successfully deleted:" + name);
     }//GEN-LAST:event_DeleteButtonActionPerformed
 
     private void CreateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CreateButtonActionPerformed
@@ -263,6 +245,33 @@ public class ListManager extends javax.swing.JFrame {
             arr[i] = favoriteListList.get(i).getName();
         }
         ListOfLists.setListData(arr);
+    }
+    
+    public void deleteFavoriteList(int i){
+        String name = ListOfLists.getModel().getElementAt(i);
+        int result = JOptionPane.showOptionDialog(null, "Διαγραφή της λίστας " + name, "Confirm",
+                    JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null,
+                    new String[]{"Οκ", "Ακύρωση"}, "Οκ");
+
+        // Έλεγχος για την απάντηση επιβεβαίωσης
+        if(result != 0){
+            return;
+        }
+        
+        EntityManager em = mainUI.em;
+        em.getTransaction().begin();
+        FavoriteList fl = em
+                .createNamedQuery("FavoriteList.findByName", FavoriteList.class)
+                .setParameter("name", name)
+                .getSingleResult();
+        
+        if(fl == null){
+            return;
+        }     
+        em.remove(fl);
+        em.flush();
+        em.getTransaction().commit();
+        System.out.println("List successfully deleted:" + name);
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton CreateButton;
