@@ -119,8 +119,6 @@ public class Methods {
                 saveMoviesOnDb(jsonResponse);
             }    
             System.out.println("Movies Fetched and Saved");
-            Component frame = null;
-            JOptionPane.showMessageDialog(frame, "Η ανάκτηση των δεδομένων ολοκληρώθηκε.");
         } catch (Exception ex) {
             System.err.println("Αδυμανία αποθήκευσης ταινιών. error :"
                     + ex.toString());
