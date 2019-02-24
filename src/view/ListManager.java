@@ -202,6 +202,8 @@ public class ListManager extends javax.swing.JFrame {
         if(newName == null){
             return;
         }
+        
+        EntityManager em = mainUI.em; // Ο EntityManager
         em.getTransaction().begin();
         FavoriteList fl = em
                 .createNamedQuery("FavoriteList.findByName", FavoriteList.class)
@@ -217,8 +219,7 @@ public class ListManager extends javax.swing.JFrame {
         System.out.println(editedFl.getName());
 
         em.getTransaction().commit(); //Αποθήκευση στη βάση των αλλαγών
-        System.out.println("List successfully updated!");
-//        System.out.println(newName);
+        System.out.println("List successfully updated to " + newName);
         updateListData();          
     }//GEN-LAST:event_EditButtonActionPerformed
 
@@ -229,7 +230,6 @@ public class ListManager extends javax.swing.JFrame {
     private void formWindowGainedFocus(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowGainedFocus
         // TODO add your handling code here:
         updateListData();
-        System.out.println("in");
     }//GEN-LAST:event_formWindowGainedFocus
     
     public void updateListData(){
@@ -244,7 +244,6 @@ public class ListManager extends javax.swing.JFrame {
 
         for(int i = 0; i < favoriteListList.size(); i++){
             arr[i] = favoriteListList.get(i).getName();
-            System.out.println(arr[i]);
         }
         ListOfLists.setListData(arr);
 //        System.out.println(ListOfLists.getModel().getSize());
