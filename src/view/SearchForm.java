@@ -22,6 +22,20 @@ public class SearchForm extends javax.swing.JFrame {
         initComponents();
         this.setLocationRelativeTo(null);
         jButton1.setEnabled(false);
+
+        // Δημιουργώ τον custom renderer για το jComboBox
+//        jComboBox1.setRenderer(new DefaultListCellRenderer() {
+//           @Override
+//           public Component getListCellRendererComponent(
+//                   JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+//               super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+//               if (value instanceof model.Genre) {
+//                   model.Genre mec = (model.Genre)value;
+//                   setText(mec.getName());
+//               }
+//               return this;
+//           }
+//        });
     }
 
     /**
