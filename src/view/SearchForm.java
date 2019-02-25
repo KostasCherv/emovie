@@ -6,6 +6,9 @@
 package view;
 
 import java.awt.Component;
+import java.util.List;
+import javax.persistence.EntityManager;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JList;
 
@@ -51,8 +54,6 @@ public class SearchForm extends javax.swing.JFrame {
         eMoviePUEntityManager = java.beans.Beans.isDesignTime() ? null : javax.persistence.Persistence.createEntityManagerFactory("eMoviePU").createEntityManager();
         movieQuery = java.beans.Beans.isDesignTime() ? null : eMoviePUEntityManager.createQuery("SELECT m FROM Movie m");
         movieList = java.beans.Beans.isDesignTime() ? java.util.Collections.emptyList() : org.jdesktop.observablecollections.ObservableCollections.observableList(movieQuery.getResultList());
-        favoriteListQuery = java.beans.Beans.isDesignTime() ? null : eMoviePUEntityManager.createQuery("SELECT f FROM FavoriteList f");
-        favoriteListList = java.beans.Beans.isDesignTime() ? java.util.Collections.emptyList() : org.jdesktop.observablecollections.ObservableCollections.observableList(favoriteListQuery.getResultList());
         genreQuery = java.beans.Beans.isDesignTime() ? null : eMoviePUEntityManager.createQuery("SELECT g FROM Genre g");
         genreList = java.beans.Beans.isDesignTime() ? java.util.Collections.emptyList() : org.jdesktop.observablecollections.ObservableCollections.observableList(genreQuery.getResultList());
         jPanel1 = new javax.swing.JPanel();
@@ -241,6 +242,7 @@ public class SearchForm extends javax.swing.JFrame {
 
     private void formWindowGainedFocus(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowGainedFocus
         // TODO add your handling code here:
+        updateComboBoxData();
     }//GEN-LAST:event_formWindowGainedFocus
 
     private void setSearchButtonStatus(){
@@ -252,12 +254,23 @@ public class SearchForm extends javax.swing.JFrame {
             }
         }
     }
+    
+    public void updateComboBoxData(){
+        EntityManager em = mainUI.em;
+        em.getTransaction().begin();
+        List<model.Genre> genreList = em
+                    .createNamedQuery("Genre.findAll", model.Genre.class)
+                    .getResultList();
+        em.getTransaction().commit();
+        
+        DefaultComboBoxModel model = new DefaultComboBoxModel(genreList.toArray());
+        
+        jComboBox1.setModel(model);       
+    }
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.persistence.EntityManager eMoviePUEntityManager;
-    private java.util.List<model.FavoriteList> favoriteListList;
-    private javax.persistence.Query favoriteListQuery;
     private java.util.List<model.Genre> genreList;
     private javax.persistence.Query genreQuery;
     private javax.swing.JButton jButton1;
