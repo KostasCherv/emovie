@@ -46,7 +46,7 @@ public class ListManager extends javax.swing.JFrame {
         EditButton = new javax.swing.JButton();
         DeleteButton = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
-        ListOfLists = new javax.swing.JList<String>();
+        ListOfLists = new javax.swing.JList<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         addWindowFocusListener(new java.awt.event.WindowFocusListener() {
@@ -57,8 +57,12 @@ public class ListManager extends javax.swing.JFrame {
             }
         });
 
+        jPanel1.setBackground(new java.awt.Color(153, 153, 153));
+
         CreateButton.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        CreateButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/gui/manager.create.png"))); // NOI18N
         CreateButton.setText("Δημιουργία");
+        CreateButton.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED, new java.awt.Color(153, 153, 0), new java.awt.Color(153, 153, 0), new java.awt.Color(153, 153, 0), new java.awt.Color(153, 153, 0)));
         CreateButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 CreateButtonActionPerformed(evt);
@@ -66,7 +70,9 @@ public class ListManager extends javax.swing.JFrame {
         });
 
         EditButton.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        EditButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/gui/manager.edit.png"))); // NOI18N
         EditButton.setText("επεξεργασία");
+        EditButton.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED, new java.awt.Color(153, 153, 0), new java.awt.Color(153, 153, 0), new java.awt.Color(153, 153, 0), new java.awt.Color(153, 153, 0)));
         EditButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 EditButtonActionPerformed(evt);
@@ -74,12 +80,17 @@ public class ListManager extends javax.swing.JFrame {
         });
 
         DeleteButton.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        DeleteButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/gui/manager.delete.png"))); // NOI18N
         DeleteButton.setText("Διαγραφή");
+        DeleteButton.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED, new java.awt.Color(153, 153, 0), new java.awt.Color(153, 153, 0), new java.awt.Color(153, 153, 0), new java.awt.Color(153, 153, 0)));
         DeleteButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 DeleteButtonActionPerformed(evt);
             }
         });
+
+        ListOfLists.setBackground(new java.awt.Color(153, 153, 153));
+        ListOfLists.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(new java.awt.Color(153, 153, 0), new java.awt.Color(153, 153, 0)), "Οι λίστες μου"));
 
         org.jdesktop.swingbinding.JListBinding jListBinding = org.jdesktop.swingbinding.SwingBindings.createJListBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, favoriteListList, ListOfLists);
         jListBinding.setDetailBinding(org.jdesktop.beansbinding.ELProperty.create("${name}"));
@@ -97,9 +108,8 @@ public class ListManager extends javax.swing.JFrame {
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 163, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(56, 56, 56)
+                .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(EditButton)
                     .addComponent(CreateButton)
@@ -112,26 +122,24 @@ public class ListManager extends javax.swing.JFrame {
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(22, 22, 22)
+                .addGap(30, 30, 30)
                 .addComponent(CreateButton)
                 .addGap(18, 18, 18)
                 .addComponent(EditButton)
                 .addGap(18, 18, 18)
                 .addComponent(DeleteButton)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 266, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 36, Short.MAX_VALUE))
+                .addGap(160, 160, 160))
+            .addComponent(jScrollPane2)
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(34, Short.MAX_VALUE))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
