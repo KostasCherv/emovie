@@ -11,6 +11,7 @@ import javax.persistence.EntityManager;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JList;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -25,7 +26,7 @@ public class SearchForm extends javax.swing.JFrame {
         initComponents();
         this.setLocationRelativeTo(null);
         jButton1.setEnabled(false);
-
+        movieList = org.jdesktop.observablecollections.ObservableCollections.observableList(movieQuery.getResultList());
         // Δημιουργώ τον custom renderer για το jComboBox
 //        jComboBox1.setRenderer(new DefaultListCellRenderer() {
 //           @Override
@@ -184,7 +185,7 @@ public class SearchForm extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton2)
                     .addComponent(jButton1))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 51, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 74, Short.MAX_VALUE)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 139, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -203,7 +204,7 @@ public class SearchForm extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGap(35, 35, 35)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(98, Short.MAX_VALUE))
+                .addContainerGap(75, Short.MAX_VALUE))
         );
 
         bindingGroup.bind();
@@ -243,6 +244,7 @@ public class SearchForm extends javax.swing.JFrame {
     private void formWindowGainedFocus(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowGainedFocus
         // TODO add your handling code here:
         updateComboBoxData();
+        updateTableData();
     }//GEN-LAST:event_formWindowGainedFocus
 
     private void setSearchButtonStatus(){
@@ -267,7 +269,24 @@ public class SearchForm extends javax.swing.JFrame {
         
         jComboBox1.setModel(model);       
     }
-
+    
+    public void updateTableData(){
+        EntityManager em = mainUI.em;
+        em.getTransaction().begin();
+        List<model.Movie> movieList = em
+                    .createNamedQuery("Movie.findAll", model.Movie.class)
+                    .getResultList();
+        em.getTransaction().commit();
+        
+        
+        DefaultTableModel tableModel = new DefaultTableModel();
+        tableModel.setColumnIdentifiers(new String[]{"Τίτλος ταινίας", "Βαθμολογία", "Περιγραφή"});
+        
+        for (model.Movie m : movieList) {
+            tableModel.addRow(new String[]{m.getTitle(), m.getRating().toString(), m.getOverview()});
+        }
+        jTable1.setModel(tableModel);
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.persistence.EntityManager eMoviePUEntityManager;
