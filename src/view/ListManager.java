@@ -10,7 +10,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import model.FavoriteList;
+import POJOS.FavoriteList;
 
 
 /**
@@ -40,13 +40,13 @@ public class ListManager extends javax.swing.JFrame {
 
         em = java.beans.Beans.isDesignTime() ? null : javax.persistence.Persistence.createEntityManagerFactory("eMoviePU").createEntityManager();
         favoriteListQuery = java.beans.Beans.isDesignTime() ? null : em.createQuery("SELECT f FROM FavoriteList f");
-        favoriteListList = java.beans.Beans.isDesignTime() ? java.util.Collections.emptyList() : favoriteListQuery.getResultList();
+        favoriteListList = java.beans.Beans.isDesignTime() ? java.util.Collections.emptyList() : org.jdesktop.observablecollections.ObservableCollections.observableList(favoriteListQuery.getResultList());
         jPanel1 = new javax.swing.JPanel();
         CreateButton = new javax.swing.JButton();
         EditButton = new javax.swing.JButton();
         DeleteButton = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
-        ListOfLists = new javax.swing.JList<>();
+        ListOfLists = new javax.swing.JList<String>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         addWindowFocusListener(new java.awt.event.WindowFocusListener() {
@@ -176,8 +176,7 @@ public class ListManager extends javax.swing.JFrame {
 
         em.getTransaction().begin(); //ξεκινάω μια καινούργια συναλλαγή
 
-        model.FavoriteList newList = new model.FavoriteList();
-
+        POJOS.FavoriteList newList = new POJOS.FavoriteList();
         newList.setName(listName);    
 
         em.persist(newList);
@@ -192,7 +191,8 @@ public class ListManager extends javax.swing.JFrame {
         if(i == -1){
             return;
         }
-        String name = ListOfLists.getModel().getElementAt(i);
+        String name = ListOfLists.getSelectedValue();
+        System.out.println(name);
         
         Object[] options = {"Αποθήκευση", "Ακύρωση"};
 
@@ -302,7 +302,7 @@ public class ListManager extends javax.swing.JFrame {
     private javax.swing.JButton EditButton;
     private javax.swing.JList<String> ListOfLists;
     private javax.persistence.EntityManager em;
-    private java.util.List<model.FavoriteList> favoriteListList;
+    private java.util.List<POJOS.FavoriteList> favoriteListList;
     private javax.persistence.Query favoriteListQuery;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane2;

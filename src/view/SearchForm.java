@@ -5,13 +5,7 @@
  */
 package view;
 
-import java.awt.Component;
-import java.util.List;
-import javax.persistence.EntityManager;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.DefaultListCellRenderer;
-import javax.swing.JList;
-import javax.swing.table.DefaultTableModel;
+
 
 /**
  *
@@ -25,21 +19,8 @@ public class SearchForm extends javax.swing.JFrame {
     public SearchForm() {
         initComponents();
         this.setLocationRelativeTo(null);
-        jButton1.setEnabled(false);
-        movieList = org.jdesktop.observablecollections.ObservableCollections.observableList(movieQuery.getResultList());
-        // Δημιουργώ τον custom renderer για το jComboBox
-//        jComboBox1.setRenderer(new DefaultListCellRenderer() {
-//           @Override
-//           public Component getListCellRendererComponent(
-//                   JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-//               super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-//               if (value instanceof model.Genre) {
-//                   model.Genre mec = (model.Genre)value;
-//                   setText(mec.getName());
-//               }
-//               return this;
-//           }
-//        });
+        searchButton.setEnabled(false);
+       
     }
 
     /**
@@ -53,19 +34,20 @@ public class SearchForm extends javax.swing.JFrame {
         bindingGroup = new org.jdesktop.beansbinding.BindingGroup();
 
         eMoviePUEntityManager = java.beans.Beans.isDesignTime() ? null : javax.persistence.Persistence.createEntityManagerFactory("eMoviePU").createEntityManager();
-        movieQuery = java.beans.Beans.isDesignTime() ? null : eMoviePUEntityManager.createQuery("SELECT m FROM Movie m");
-        movieList = java.beans.Beans.isDesignTime() ? java.util.Collections.emptyList() : org.jdesktop.observablecollections.ObservableCollections.observableList(movieQuery.getResultList());
-        genreQuery = java.beans.Beans.isDesignTime() ? null : eMoviePUEntityManager.createQuery("SELECT g FROM Genre g");
-        genreList = java.beans.Beans.isDesignTime() ? java.util.Collections.emptyList() : org.jdesktop.observablecollections.ObservableCollections.observableList(genreQuery.getResultList());
+        genreQuery = java.beans.Beans.isDesignTime() ? null : eMoviePUEntityManager.createQuery("SELECT g.name FROM Genre g");
+        genreList = java.beans.Beans.isDesignTime() ? java.util.Collections.emptyList() : genreQuery.getResultList();
         jPanel1 = new javax.swing.JPanel();
-        jComboBox1 = new javax.swing.JComboBox();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
-        jButton2 = new javax.swing.JButton();
-        jButton1 = new javax.swing.JButton();
+        yearTextField = new javax.swing.JTextField();
+        clearButton = new javax.swing.JButton();
+        searchButton = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
+        genreComboBox = new javax.swing.JComboBox();
+        jPanel2 = new javax.swing.JPanel();
+        myListsComboBox = new javax.swing.JComboBox<>();
+        deleteFromList = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         addWindowFocusListener(new java.awt.event.WindowFocusListener() {
@@ -76,71 +58,40 @@ public class SearchForm extends javax.swing.JFrame {
             }
         });
 
-        jComboBox1.setRenderer(new DefaultListCellRenderer() {
-            @Override
-            public Component getListCellRendererComponent(
-                JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-                super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-                if (value instanceof model.Genre) {
-                    model.Genre mec = (model.Genre)value;
-                    setText(mec.getName());
-                }
-                return this;
-            }
-        });
-
-        org.jdesktop.swingbinding.JComboBoxBinding jComboBoxBinding = org.jdesktop.swingbinding.SwingBindings.createJComboBoxBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, genreList, jComboBox1);
-        bindingGroup.addBinding(jComboBoxBinding);
-
-        jComboBox1.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jComboBox1MouseClicked(evt);
-            }
-        });
-
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel1.setText("Επιλέξτε είδος:");
 
         jLabel2.setText("Επιλέξτε έτος κυκλοφορίας:");
 
-        jTextField1.addActionListener(new java.awt.event.ActionListener() {
+        yearTextField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField1ActionPerformed(evt);
+                yearTextFieldActionPerformed(evt);
             }
         });
-        jTextField1.addKeyListener(new java.awt.event.KeyAdapter() {
+        yearTextField.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
-                jTextField1KeyReleased(evt);
+                yearTextFieldKeyReleased(evt);
             }
         });
 
-        jButton2.setText("Καθαρισμός");
-        jButton2.addMouseListener(new java.awt.event.MouseAdapter() {
+        clearButton.setText("Καθαρισμός");
+        clearButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jButton2MouseClicked(evt);
+                clearButtonMouseClicked(evt);
             }
         });
 
-        jButton1.setText("Αναζήτηση");
-        jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
+        searchButton.setText("Αναζήτηση");
+        searchButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jButton1MouseClicked(evt);
+                searchButtonMouseClicked(evt);
             }
         });
 
-        org.jdesktop.swingbinding.JTableBinding jTableBinding = org.jdesktop.swingbinding.SwingBindings.createJTableBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, movieList, jTable1);
-        org.jdesktop.swingbinding.JTableBinding.ColumnBinding columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${title}"));
-        columnBinding.setColumnName("Title");
-        columnBinding.setColumnClass(String.class);
-        columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${rating}"));
-        columnBinding.setColumnName("Rating");
-        columnBinding.setColumnClass(Double.class);
-        columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${overview}"));
-        columnBinding.setColumnName("Overview");
-        columnBinding.setColumnClass(String.class);
-        bindingGroup.addBinding(jTableBinding);
-        jTableBinding.bind();
         jScrollPane1.setViewportView(jTable1);
+
+        org.jdesktop.swingbinding.JComboBoxBinding jComboBoxBinding = org.jdesktop.swingbinding.SwingBindings.createJComboBoxBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, genreList, genreComboBox);
+        bindingGroup.addBinding(jComboBoxBinding);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -148,46 +99,78 @@ public class SearchForm extends javax.swing.JFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                        .addGroup(jPanel1Layout.createSequentialGroup()
-                            .addComponent(jButton1)
-                            .addGap(30, 30, 30)
-                            .addComponent(jButton2))
-                        .addGroup(jPanel1Layout.createSequentialGroup()
-                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.TRAILING)
-                                .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGap(18, 18, 18)
-                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 176, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 159, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 582, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(152, 152, 152)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel2)
+                            .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGap(58, 58, 58)
+                                .addComponent(searchButton)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(clearButton))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(yearTextField, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 159, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(genreComboBox, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 176, javax.swing.GroupLayout.PREFERRED_SIZE))))))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jPanel1Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jButton1, jButton2});
+        jPanel1Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {clearButton, searchButton});
 
-        jPanel1Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jComboBox1, jTextField1});
+        jPanel1Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {genreComboBox, yearTextField});
 
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(21, 21, 21)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel1))
+                    .addComponent(jLabel1)
+                    .addComponent(genreComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(yearTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton2)
-                    .addComponent(jButton1))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 74, Short.MAX_VALUE)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 139, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(clearButton)
+                    .addComponent(searchButton))
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 316, Short.MAX_VALUE)
                 .addContainerGap())
+        );
+
+        myListsComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                myListsComboBoxActionPerformed(evt);
+            }
+        });
+
+        deleteFromList.setText("Διαγραφή από τη λίστα");
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGap(47, 47, 47)
+                .addComponent(myListsComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 184, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(deleteFromList)
+                .addGap(53, 53, 53))
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addContainerGap(37, Short.MAX_VALUE)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(deleteFromList)
+                    .addComponent(myListsComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(30, 30, 30))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -195,16 +178,22 @@ public class SearchForm extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(23, 23, 23)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(10, 10, 10)
+                        .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(35, 35, 35)
+                .addContainerGap()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(75, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         bindingGroup.bind();
@@ -212,69 +201,56 @@ public class SearchForm extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton2MouseClicked
+    private void clearButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_clearButtonMouseClicked
         // TODO add your handling code here:
-        jTextField1.setText("");
-        jComboBox1.setSelectedIndex(0);
-        jButton1.setEnabled(false);
+        yearTextField.setText("");
+        genreComboBox.setSelectedIndex(0);
+        searchButton.setEnabled(false);
         System.out.println("clear");
-    }//GEN-LAST:event_jButton2MouseClicked
+    }//GEN-LAST:event_clearButtonMouseClicked
 
-    private void jButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MouseClicked
+    private void searchButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_searchButtonMouseClicked
         // TODO add your handling code here:
-        String genre = jComboBox1.getSelectedItem().toString();
-        String year = jTextField1.getText();
+        String genre = genreComboBox.getSelectedItem().toString();
+        String year = yearTextField.getText();
          
         System.out.println("Search");
-    }//GEN-LAST:event_jButton1MouseClicked
+    }//GEN-LAST:event_searchButtonMouseClicked
 
-    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
+    private void yearTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_yearTextFieldActionPerformed
         
-    }//GEN-LAST:event_jTextField1ActionPerformed
+    }//GEN-LAST:event_yearTextFieldActionPerformed
 
-    private void jTextField1KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField1KeyReleased
+    private void yearTextFieldKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_yearTextFieldKeyReleased
         setSearchButtonStatus();
-    }//GEN-LAST:event_jTextField1KeyReleased
-
-    private void jComboBox1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jComboBox1MouseClicked
-        // TODO add your handling code here:
-        setSearchButtonStatus();
-    }//GEN-LAST:event_jComboBox1MouseClicked
+    }//GEN-LAST:event_yearTextFieldKeyReleased
 
     private void formWindowGainedFocus(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowGainedFocus
         // TODO add your handling code here:
-        updateComboBoxData();
-        updateTableData();
+       
     }//GEN-LAST:event_formWindowGainedFocus
 
+    private void myListsComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_myListsComboBoxActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_myListsComboBoxActionPerformed
+
     private void setSearchButtonStatus(){
-        if(jTextField1.getText().isEmpty()){
-            jButton1.setEnabled(false); // Απενεργοποίηση της αναζήτησης όταν είναι άδειο το έτος
+        if(yearTextField.getText().isEmpty()){
+            searchButton.setEnabled(false); // Απενεργοποίηση της αναζήτησης όταν είναι άδειο το έτος
         }else {
-            if(jComboBox1.getSelectedIndex() > -1){
-                jButton1.setEnabled(true);    
+            if(genreComboBox.getSelectedIndex() > -1){
+                searchButton.setEnabled(true);    
             }
         }
     }
     
-    public void updateComboBoxData(){
-        EntityManager em = mainUI.em;
-        em.getTransaction().begin();
-        List<model.Genre> genreList = em
-                    .createNamedQuery("Genre.findAll", model.Genre.class)
-                    .getResultList();
-        em.getTransaction().commit();
-        
-        DefaultComboBoxModel model = new DefaultComboBoxModel(genreList.toArray());
-        
-        jComboBox1.setModel(model);       
-    }
     
+   /* 
     public void updateTableData(){
         EntityManager em = mainUI.em;
         em.getTransaction().begin();
-        List<model.Movie> movieList = em
-                    .createNamedQuery("Movie.findAll", model.Movie.class)
+        List<POJOS.Movie> movieList = em
+                    .createNamedQuery("Movie.findAll", POJOS.Movie.class)
                     .getResultList();
         em.getTransaction().commit();
         
@@ -282,27 +258,28 @@ public class SearchForm extends javax.swing.JFrame {
         DefaultTableModel tableModel = new DefaultTableModel();
         tableModel.setColumnIdentifiers(new String[]{"Τίτλος ταινίας", "Βαθμολογία", "Περιγραφή"});
         
-        for (model.Movie m : movieList) {
+        for (POJOS.Movie m : movieList) {
             tableModel.addRow(new String[]{m.getTitle(), m.getRating().toString(), m.getOverview()});
         }
         jTable1.setModel(tableModel);
     }
-
+*/
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton clearButton;
+    private javax.swing.JButton deleteFromList;
     private javax.persistence.EntityManager eMoviePUEntityManager;
-    private java.util.List<model.Genre> genreList;
+    private javax.swing.JComboBox genreComboBox;
+    private java.util.List<POJOS.Genre> genreList;
     private javax.persistence.Query genreQuery;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JComboBox jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
-    private javax.swing.JTextField jTextField1;
-    private java.util.List<model.Movie> movieList;
-    private javax.persistence.Query movieQuery;
+    private javax.swing.JComboBox<String> myListsComboBox;
+    private javax.swing.JButton searchButton;
+    private javax.swing.JTextField yearTextField;
     private org.jdesktop.beansbinding.BindingGroup bindingGroup;
     // End of variables declaration//GEN-END:variables
 }

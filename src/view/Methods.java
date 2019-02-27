@@ -61,7 +61,7 @@ public class Methods {
             em = mainUI.em;
             String json;   
             Gson gson = new GsonBuilder().create();
-            model.GenresResponse jsonResponse;
+            POJOS.GenresResponse jsonResponse;
             List<Integer> genreIds = new ArrayList<>(Arrays.asList(28, 10749, 878));
             //σύνδεση με το api και άντληση όλων των ειδών ταινιών
             String webPage = url + "genre/movie/list?";
@@ -69,7 +69,7 @@ public class Methods {
             json = readFromURL(webPage);
 
             //η αποκωδικοποίηση της μορφής του json
-            jsonResponse = gson.fromJson(json, model.GenresResponse.class);
+            jsonResponse = gson.fromJson(json, POJOS.GenresResponse.class);
             // Καταχώσηση δεδομένων για κάθε είδος
             if (!em.getTransaction().isActive()) {
                 em.getTransaction().begin(); //ξεκινάω μια καινούργια 
@@ -77,10 +77,10 @@ public class Methods {
             }
             //για κάθε στοιχείο λίστα του json άνληση δεδομένων 
             //και αποθήκευση στην Β.Δ.
-            for (model.Genre element : jsonResponse.genres){
+            for (POJOS.Genre element : jsonResponse.genres){
                 if(genreIds.contains(element.getId())){
                     // δημιουργία αντικειμένου κάθε είδους
-                    model.Genre genre = new model.Genre();  
+                    POJOS.Genre genre = new POJOS.Genre();  
                     genre.setId(element.getId());
                     genre.setName(element.getName());
                    
@@ -104,18 +104,18 @@ public class Methods {
         try {
             String json;   
             Gson gson = new GsonBuilder().create();
-            model.MoviesResponse jsonResponse;
+            POJOS.MoviesResponse jsonResponse;
             //σύνδεση με το api και άντληση όλων των ειδών ταινιών
             String webPage = url + "discover/movie?with_genres=28,878,10749&primary_release_date.gte=2000-01-01";
             webPage += mainUI.apiKey;
             json = readFromURL(webPage + "&page=1");
             //η αποκωδικοποίηση της μορφής του json
-            jsonResponse = gson.fromJson(json, model.MoviesResponse.class);
+            jsonResponse = gson.fromJson(json, POJOS.MoviesResponse.class);
             
             saveMoviesOnDb(jsonResponse);
             for(int i = 2; i <= jsonResponse.total_pages; i++){
                 json = readFromURL(webPage + "&page=" + i);
-                jsonResponse = gson.fromJson(json, model.MoviesResponse.class);
+                jsonResponse = gson.fromJson(json, POJOS.MoviesResponse.class);
                 saveMoviesOnDb(jsonResponse);
             }    
             System.out.println("Movies Fetched and Saved");
@@ -128,7 +128,7 @@ public class Methods {
     
     //για κάθε στοιχείο λίστα του json άνληση δεδομένων 
     //και αποθήκευση στην Β.Δ.
-    public static void saveMoviesOnDb(model.MoviesResponse movies){
+    public static void saveMoviesOnDb(POJOS.MoviesResponse movies){
         List<Integer> genreIds = new ArrayList<>(Arrays.asList(28, 10749, 878));
         
         EntityManager em;
@@ -138,9 +138,9 @@ public class Methods {
             em.getTransaction().begin(); //ξεκινάω μια καινούργια 
             //συναλλαγή για να αποθηκεύσω στη βάση δεδομένων τα δεδομένα
         }
-        for (model.MovieResponse element : movies.results){
+        for (POJOS.MovieResponse element : movies.results){
             // δημιουργία αντικειμένου κάθε ταινίας
-            model.Movie movie = new model.Movie();  
+            POJOS.Movie movie = new POJOS.Movie();  
             movie.setId(element.id);
             movie.setTitle(element.title);
             movie.setReleaseDate(element.release_date);
@@ -149,7 +149,7 @@ public class Methods {
 
             for (int id : element.genre_ids) {
                if(genreIds.contains(id)){
-                   movie.setGenreId(em.getReference(model.Genre.class, id));
+                   movie.setGenreId(em.getReference(POJOS.Genre.class, id));
                    break;
                }
             }
@@ -173,23 +173,23 @@ public class Methods {
             }
             
             // Διαγραγή των ταινιών από τη βάση και από τον Entity Manager
-            TypedQuery<model.Movie> movieQuery = em.createNamedQuery("Movie.findAll", model.Movie.class);
-            List<model.Movie> movieResults = movieQuery.getResultList();
-            for(model.Movie t: movieResults){
+            TypedQuery<POJOS.Movie> movieQuery = em.createNamedQuery("Movie.findAll", POJOS.Movie.class);
+            List<POJOS.Movie> movieResults = movieQuery.getResultList();
+            for(POJOS.Movie t: movieResults){
                 em.remove(t);
             }
             
             // Διαγραγή των ειδών από τη βάση και από τον Entity Manager
-            TypedQuery<model.Genre> genreQuery = em.createNamedQuery("Genre.findAll", model.Genre.class);
-            List<model.Genre> genreResults = genreQuery.getResultList();
-            for(model.Genre t: genreResults){
+            TypedQuery<POJOS.Genre> genreQuery = em.createNamedQuery("Genre.findAll", POJOS.Genre.class);
+            List<POJOS.Genre> genreResults = genreQuery.getResultList();
+            for(POJOS.Genre t: genreResults){
                 em.remove(t);
             }
             
             // Διαγραγή των αγαπημένων λιστών από τη βάση και από τον Entity Manager
-            TypedQuery<model.FavoriteList> favListQuery = em.createNamedQuery("FavoriteList.findAll", model.FavoriteList.class);
-            List<model.FavoriteList> favListResults = favListQuery.getResultList();
-            for(model.FavoriteList t: favListResults){
+            TypedQuery<POJOS.FavoriteList> favListQuery = em.createNamedQuery("FavoriteList.findAll", POJOS.FavoriteList.class);
+            List<POJOS.FavoriteList> favListResults = favListQuery.getResultList();
+            for(POJOS.FavoriteList t: favListResults){
                 em.remove(t);
             }
             
