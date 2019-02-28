@@ -220,14 +220,13 @@
       </SubComponents>
     </Container>
     <Component class="javax.swing.JComboBox" name="listCombo">
-      <Properties>
-        <Property name="renderer" type="javax.swing.ListCellRenderer" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-          <Connection code="&#xd;&#xa;public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {&#xd;&#xa;  super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);&#xd;&#xa;  if (value != null) {&#xd;&#xa;    FavoriteList myObj = (FavoriteList) value;&#xd;&#xa;    setText(myObj.getName());&#xd;&#xa;  }&#xd;&#xa;  return this;&#xd;&#xa;         " type="code"/>
-        </Property>
-      </Properties>
       <BindingProperties>
         <BindingProperty name="elements" source="favoriteListList" target="listCombo" targetPath="elements" updateStrategy="0" immediately="false"/>
       </BindingProperties>
+      <Events>
+        <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="listComboMouseClicked"/>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="listComboActionPerformed"/>
+      </Events>
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new javax.swing.JComboBox()"/>
       </AuxValues>

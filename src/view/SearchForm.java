@@ -6,16 +6,17 @@
 package view;
 
 import POJOS.FavoriteList;
+import POJOS.Movie;
 import java.awt.Component;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import javax.persistence.EntityManager;
-import javax.swing.DefaultListCellRenderer;
 import javax.swing.JList;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.plaf.basic.BasicComboBoxRenderer;
 import javax.swing.table.DefaultTableModel;
 
 
@@ -39,6 +40,19 @@ public class SearchForm extends javax.swing.JFrame {
                 onSelectRow();
             }
         });
+        class ItemRenderer extends BasicComboBoxRenderer {
+        public Component getListCellRendererComponent(
+            JList list, Object value, int index, boolean isSelected, boolean cellHasFocus){
+            super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+
+            if (value instanceof FavoriteList)
+            {
+                FavoriteList foo = (FavoriteList)value;
+                setText( foo.getName() );
+            }
+            return this;
+        }}
+        listCombo.setRenderer(new ItemRenderer());
     }
 
     /**
@@ -151,77 +165,78 @@ public class SearchForm extends javax.swing.JFrame {
 
         jScrollPane1.setViewportView(movieTable);
 
-        listCombo.setRenderer((new DefaultListCellRenderer() {
-          public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-            super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-            if (value != null) {
-              FavoriteList myObj = (FavoriteList) value;
-              setText(myObj.getName());
+        jComboBoxBinding = org.jdesktop.swingbinding.SwingBindings.createJComboBoxBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, favoriteListList, listCombo);
+        bindingGroup.addBinding(jComboBoxBinding);
+
+        listCombo.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                listComboMouseClicked(evt);
             }
-            return this;
-        }}));
+        });
+        listCombo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                listComboActionPerformed(evt);
+            }
+        });
 
-            jComboBoxBinding = org.jdesktop.swingbinding.SwingBindings.createJComboBoxBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, favoriteListList, listCombo);
-            bindingGroup.addBinding(jComboBoxBinding);
+        jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLabel3.setText("Επιλέξτε λίστα:");
 
-            jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-            jLabel3.setText("Επιλέξτε λίστα:");
+        DeleteButton.setText("Διαγραφή από τη λίστα");
+        DeleteButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                DeleteButtonMouseClicked(evt);
+            }
+        });
+        DeleteButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                DeleteButtonActionPerformed(evt);
+            }
+        });
 
-            DeleteButton.setText("Διαγραφή από τη λίστα");
-            DeleteButton.addMouseListener(new java.awt.event.MouseAdapter() {
-                public void mouseClicked(java.awt.event.MouseEvent evt) {
-                    DeleteButtonMouseClicked(evt);
-                }
-            });
-            DeleteButton.addActionListener(new java.awt.event.ActionListener() {
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    DeleteButtonActionPerformed(evt);
-                }
-            });
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(48, 48, 48))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(0, 0, Short.MAX_VALUE)
+                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 513, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                                .addGap(34, 34, 34)
+                                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(listCombo, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(DeleteButton)))
+                        .addGap(58, 58, 58))))
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 222, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 34, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(listCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(DeleteButton))
+                .addGap(35, 35, 35))
+        );
 
-            javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-            getContentPane().setLayout(layout);
-            layout.setHorizontalGroup(
-                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                    .addContainerGap()
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(layout.createSequentialGroup()
-                            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGap(48, 48, 48))
-                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                .addGroup(layout.createSequentialGroup()
-                                    .addGap(0, 0, Short.MAX_VALUE)
-                                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 513, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                                    .addGap(34, 34, 34)
-                                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                    .addComponent(listCombo, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(DeleteButton)))
-                            .addGap(58, 58, 58))))
-            );
-            layout.setVerticalGroup(
-                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(layout.createSequentialGroup()
-                    .addContainerGap()
-                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGap(18, 18, 18)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 222, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 34, Short.MAX_VALUE)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(listCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(DeleteButton))
-                    .addGap(35, 35, 35))
-            );
+        bindingGroup.bind();
 
-            bindingGroup.bind();
-
-            pack();
-        }// </editor-fold>//GEN-END:initComponents
+        pack();
+    }// </editor-fold>//GEN-END:initComponents
 
     private void clearButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_clearButtonMouseClicked
         // TODO add your handling code here:
@@ -264,6 +279,34 @@ public class SearchForm extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_DeleteButtonActionPerformed
 
+    private void listComboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_listComboActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_listComboActionPerformed
+
+    private void listComboMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_listComboMouseClicked
+        // TODO add your handling code here:
+        if(movieTable.getModel().getRowCount() == 0){
+            return;
+        }
+        String title = movieTable.getValueAt(movieTable.getSelectedRow(), 0).toString();
+        
+        FavoriteList fl = (FavoriteList)listCombo.getSelectedItem();
+        EntityManager em = mainUI.em;
+        
+        List<Movie> m = em.createNamedQuery("Movie.findByTitle").setParameter("title", title).getResultList();
+        System.out.println(fl);
+        System.out.println(m);
+        em.getTransaction().begin();
+        m.get(0).setFavoriteListId(fl);
+        em.persist(m.get(0));
+        em.getTransaction().commit();
+        
+        if(title != null){
+            System.out.println("Add " +  title + " in the list " + fl.getName() );
+        }
+        System.out.println(String.valueOf(listCombo.getSelectedItem()));
+    }//GEN-LAST:event_listComboMouseClicked
+
     private void setSearchButtonStatus(){
         if(yearTextField.getText().isEmpty()){
             searchButton.setEnabled(false); // Απενεργοποίηση της αναζήτησης όταν είναι άδειο το έτος
@@ -276,10 +319,25 @@ public class SearchForm extends javax.swing.JFrame {
     
     public void onSelectRow(){
        //get selected item
+        
         // find if fav list id
         // if exists set combo box to this value
         // else set combo box to empty
-       System.out.println(movieTable.getValueAt(movieTable.getSelectedRow(), 0).toString());
+       String title = movieTable.getValueAt(movieTable.getSelectedRow(), 0).toString();
+       EntityManager em = mainUI.em;
+       List<POJOS.Movie> m = em.createNamedQuery("Movie.findByTitle").setParameter("title", title).getResultList();
+//       List<POJOS.Movie> movieList = em.createQuery("SELECT f FROM FavoriteList f WHERE f.name = :genreName and m.releaseDate >= :date")
+//                    .setParameter("genreName", genreName)
+//                    .getResultList();
+       String name;
+       if(m.get(0).getFavoriteListId() != null){
+            name = m.get(0).getFavoriteListId().getName();
+           System.out.print("123" + name);
+       }else {
+           System.out.println("Not found list");
+       }
+       System.out.println(title);
+       
     }
     
     
@@ -298,7 +356,7 @@ public class SearchForm extends javax.swing.JFrame {
            //TODO new prompt error message
         } 
 
-        List<POJOS.Movie> movieList = em.createQuery("SELECT m FROM Movie m WHERE m.genreId.name = :genreName and m.releaseDate > :date")
+        List<POJOS.Movie> movieList = em.createQuery("SELECT m FROM Movie m WHERE m.genreId.name = :genreName and m.releaseDate >= :date")
                     .setParameter("genreName", genreName)
                     .setParameter("date", date)
                     .getResultList();
