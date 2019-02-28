@@ -14,6 +14,8 @@ import java.util.Locale;
 import javax.persistence.EntityManager;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JList;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 
 
@@ -31,6 +33,12 @@ public class SearchForm extends javax.swing.JFrame {
         initComponents();
         this.setLocationRelativeTo(null);
         searchButton.setEnabled(false);
+        
+        movieTable.getSelectionModel().addListSelectionListener(new ListSelectionListener(){
+            public void valueChanged(ListSelectionEvent event) {
+                onSelectRow();
+            }
+        });
     }
 
     /**
@@ -264,6 +272,14 @@ public class SearchForm extends javax.swing.JFrame {
                 searchButton.setEnabled(true);    
             }
         }
+    }
+    
+    public void onSelectRow(){
+       //get selected item
+        // find if fav list id
+        // if exists set combo box to this value
+        // else set combo box to empty
+       System.out.println(movieTable.getValueAt(movieTable.getSelectedRow(), 0).toString());
     }
     
     
