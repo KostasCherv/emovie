@@ -33,19 +33,16 @@ public class SearchForm extends javax.swing.JFrame {
     public SearchForm() {
         initComponents();
         this.setLocationRelativeTo(null);
-        searchButton.setEnabled(false);
         
-        listCombo.setEnabled(false);
-        
-        genreCombo.setSelectedIndex(-1);
-        listCombo.setSelectedIndex(-1);
-        
+        setInitialComponentsState();
+ 
         movieTable.getSelectionModel().addListSelectionListener(new ListSelectionListener(){
             public void valueChanged(ListSelectionEvent event) {
                 if(movieTable.getSelectedRowCount() == 0) return;
                 onSelectRow();
             }
         });
+        
         class ItemRenderer extends BasicComboBoxRenderer {
         public Component getListCellRendererComponent(
             JList list, Object value, int index, boolean isSelected, boolean cellHasFocus){
@@ -60,7 +57,7 @@ public class SearchForm extends javax.swing.JFrame {
         }}
         listCombo.setRenderer(new ItemRenderer());
     }
-
+  
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -252,18 +249,7 @@ public class SearchForm extends javax.swing.JFrame {
 
     private void clearButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_clearButtonMouseClicked
         // TODO add your handling code here:
-        yearTextField.setText("");
-        genreCombo.setSelectedIndex(-1);
-        searchButton.setEnabled(false);
-        
-        DefaultTableModel tableModel = new DefaultTableModel();
-        tableModel.setColumnIdentifiers(new String[]{"Τίτλος ταινίας", "Βαθμολογία", "Περιγραφή"});
-        movieTable.setModel(tableModel);
-        
-        listCombo.setEnabled(false);
-        listCombo.setSelectedIndex(-1);
-        System.out.println("clear");
-        
+        setInitialComponentsState();
     }//GEN-LAST:event_clearButtonMouseClicked
 
     private void searchButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_searchButtonMouseClicked
@@ -291,7 +277,21 @@ public class SearchForm extends javax.swing.JFrame {
     }//GEN-LAST:event_DeleteButtonMouseClicked
 
     private void DeleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DeleteButtonActionPerformed
-        // TODO add your handling code here:
+        if(listCombo.getSelectedIndex() == -1){
+            return;
+        }
+
+        String title = movieTable.getValueAt(movieTable.getSelectedRow(), 0).toString();
+        
+        EntityManager em = mainUI.em;
+        List<Movie> m = em.createNamedQuery("Movie.findByTitle").setParameter("title", title).getResultList();
+
+        em.getTransaction().begin();
+        m.get(0).setFavoriteListId(null);
+        em.persist(m.get(0));
+        em.getTransaction().commit();
+        
+        listCombo.setSelectedIndex(-1);
     }//GEN-LAST:event_DeleteButtonActionPerformed
 
     private void listComboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_listComboActionPerformed
@@ -339,7 +339,8 @@ public class SearchForm extends javax.swing.JFrame {
         }
     }
     
-    public void onSelectRow(){        
+    public void onSelectRow(){
+       DeleteButton.setEnabled(false);
        String title = movieTable.getValueAt(movieTable.getSelectedRow(), 0).toString();
        EntityManager em = mainUI.em;
        List<POJOS.Movie> m = em.createNamedQuery("Movie.findByTitle").setParameter("title", title).getResultList();
@@ -347,11 +348,11 @@ public class SearchForm extends javax.swing.JFrame {
        listCombo.setEnabled(true);
        
        if(m.get(0).getFavoriteListId() != null){
-            FavoriteList fl = m.get(0).getFavoriteListId();
+           FavoriteList fl = m.get(0).getFavoriteListId();
            setSelectedList(fl);
+           DeleteButton.setEnabled(true);
        }else {
            listCombo.setSelectedIndex(-1);
-           System.out.println("Not found list");
        }
        System.out.println(title);
        
@@ -389,6 +390,20 @@ public class SearchForm extends javax.swing.JFrame {
             tableModel.addRow(new String[]{m.getTitle(), m.getRating().toString(), m.getOverview()});
         }
         movieTable.setModel(tableModel);
+    }
+    
+     public void setInitialComponentsState(){
+        searchButton.setEnabled(false);
+        listCombo.setEnabled(false);
+        DeleteButton.setEnabled(false);
+        genreCombo.setSelectedIndex(-1);
+        listCombo.setSelectedIndex(-1);
+        
+        yearTextField.setText("");
+        DefaultTableModel tableModel = new DefaultTableModel();
+        tableModel.setColumnIdentifiers(new String[]{"Τίτλος ταινίας", "Βαθμολογία", "Περιγραφή"});
+        movieTable.setModel(tableModel);
+        
     }
     
   
