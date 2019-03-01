@@ -6,13 +6,16 @@
 package view;
 
 import POJOS.FavoriteList;
+import POJOS.Genre;
 import POJOS.Movie;
 import java.awt.Component;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import javax.persistence.EntityManager;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JList;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -26,6 +29,7 @@ import javax.swing.table.DefaultTableModel;
  * @author rodius
  */
 public class SearchForm extends javax.swing.JFrame {
+    javax.persistence.EntityManager em = mainUI.em;
 
     /**
      * Creates new form SearchForm
@@ -43,19 +47,33 @@ public class SearchForm extends javax.swing.JFrame {
             }
         });
         
-        class ItemRenderer extends BasicComboBoxRenderer {
-        public Component getListCellRendererComponent(
-            JList list, Object value, int index, boolean isSelected, boolean cellHasFocus){
-            super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+        class FavoriteListRenderer extends BasicComboBoxRenderer {
+            public Component getListCellRendererComponent(
+                JList list, Object value, int index, boolean isSelected, boolean cellHasFocus){
+                super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 
-            if (value instanceof FavoriteList)
-            {
-                FavoriteList foo = (FavoriteList)value;
-                setText( foo.getName() );
-            }
-            return this;
-        }}
-        listCombo.setRenderer(new ItemRenderer());
+                if (value instanceof FavoriteList)
+                {
+                    FavoriteList foo = (FavoriteList)value;
+                    setText( foo.getName() );
+                }
+                return this;
+            }}
+        listCombo.setRenderer(new FavoriteListRenderer());
+        
+        class GenreRenderer extends BasicComboBoxRenderer {
+            public Component getListCellRendererComponent(
+                JList list, Object value, int index, boolean isSelected, boolean cellHasFocus){
+                super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+
+                if (value instanceof Genre)
+                {
+                    Genre foo = (Genre)value;
+                    setText( foo.getName() );
+                }
+                return this;
+            }}
+        genreCombo.setRenderer(new GenreRenderer());        
     }
   
     /**
@@ -68,8 +86,8 @@ public class SearchForm extends javax.swing.JFrame {
     private void initComponents() {
         bindingGroup = new org.jdesktop.beansbinding.BindingGroup();
 
-        eMoviePUEntityManager = java.beans.Beans.isDesignTime() ? null : javax.persistence.Persistence.createEntityManagerFactory("eMoviePU").createEntityManager();
-        genreQuery = java.beans.Beans.isDesignTime() ? null : eMoviePUEntityManager.createQuery("SELECT g.name FROM Genre g");
+        javax.persistence.EntityManager eMoviePUEntityManager = java.beans.Beans.isDesignTime() ? null : javax.persistence.Persistence.createEntityManagerFactory("eMoviePU").createEntityManager();
+        genreQuery = java.beans.Beans.isDesignTime() ? null : mainUI.em.createQuery("SELECT g FROM Genre g");
         genreList = java.beans.Beans.isDesignTime() ? java.util.Collections.emptyList() : org.jdesktop.observablecollections.ObservableCollections.observableList(genreQuery.getResultList());
         favoriteListQuery = java.beans.Beans.isDesignTime() ? null : eMoviePUEntityManager.createQuery("SELECT f FROM FavoriteList f");
         favoriteListList = java.beans.Beans.isDesignTime() ? java.util.Collections.emptyList() : org.jdesktop.observablecollections.ObservableCollections.observableList(favoriteListQuery.getResultList());
@@ -264,8 +282,30 @@ public class SearchForm extends javax.swing.JFrame {
     }//GEN-LAST:event_yearTextFieldKeyReleased
 
     private void formWindowGainedFocus(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowGainedFocus
-        // TODO add your handling code here:
+       // TODO add your handling code here:
+       genreList = genreQuery.getResultList();
+       if(genreList.size() > 0){
+            List<String> gelist = new ArrayList<String>();
+            for(Genre g: genreList){
+                gelist.add(g.getName());
+            }
+            DefaultComboBoxModel gemodel = new DefaultComboBoxModel(gelist.toArray());
+            genreCombo.setModel(gemodel);
+       }
+        
+
+       favoriteListList = favoriteListQuery.getResultList();
+       if(favoriteListList.size() > 0) {
+        List<String> flist = new ArrayList<String>();
+        for(FavoriteList g: favoriteListList){
+            flist.add(g.getName());
+        }
+        DefaultComboBoxModel limodel = new DefaultComboBoxModel(flist.toArray());
+        listCombo.setModel(limodel);
+       }
        
+       setInitialComponentsState();
+        
     }//GEN-LAST:event_formWindowGainedFocus
 
     private void myListsComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_myListsComboBoxActionPerformed
@@ -284,11 +324,11 @@ public class SearchForm extends javax.swing.JFrame {
         String title = movieTable.getValueAt(movieTable.getSelectedRow(), 0).toString();
         
         EntityManager em = mainUI.em;
-        List<Movie> m = em.createNamedQuery("Movie.findByTitle").setParameter("title", title).getResultList();
+        Movie m = em.createNamedQuery("Movie.findByTitle", Movie.class).setParameter("title", title).getSingleResult();
 
         em.getTransaction().begin();
-        m.get(0).setFavoriteListId(null);
-        em.persist(m.get(0));
+        m.setFavoriteListId(null);
+        em.persist(m);
         em.getTransaction().commit();
         
         listCombo.setSelectedIndex(-1);
@@ -305,14 +345,17 @@ public class SearchForm extends javax.swing.JFrame {
         
         String title = movieTable.getValueAt(movieTable.getSelectedRow(), 0).toString();
         
-        FavoriteList fl = (FavoriteList)listCombo.getSelectedItem();
+        String name = (String)listCombo.getSelectedItem();
+        
         EntityManager em = mainUI.em;
         
-        List<Movie> m = em.createNamedQuery("Movie.findByTitle").setParameter("title", title).getResultList();
+        FavoriteList fl = em.createNamedQuery("FavoriteList.findByName", FavoriteList.class).setParameter("name", name).getSingleResult();
+
+        Movie m = em.createNamedQuery("Movie.findByTitle", Movie.class).setParameter("title", title).getSingleResult();
 
         em.getTransaction().begin();
-        m.get(0).setFavoriteListId(fl);
-        em.persist(m.get(0));
+        m.setFavoriteListId(fl);
+        em.persist(m);
         em.getTransaction().commit();
         
         if(title != null){
@@ -343,12 +386,12 @@ public class SearchForm extends javax.swing.JFrame {
        DeleteButton.setEnabled(false);
        String title = movieTable.getValueAt(movieTable.getSelectedRow(), 0).toString();
        EntityManager em = mainUI.em;
-       List<POJOS.Movie> m = em.createNamedQuery("Movie.findByTitle").setParameter("title", title).getResultList();
+       Movie m = em.createNamedQuery("Movie.findByTitle", Movie.class).setParameter("title", title).getSingleResult();
        
        listCombo.setEnabled(true);
        
-       if(m.get(0).getFavoriteListId() != null){
-           FavoriteList fl = m.get(0).getFavoriteListId();
+       if(m.getFavoriteListId() != null){
+           FavoriteList fl = m.getFavoriteListId();
            setSelectedList(fl);
            DeleteButton.setEnabled(true);
        }else {
@@ -411,7 +454,6 @@ public class SearchForm extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton DeleteButton;
     private javax.swing.JButton clearButton;
-    private javax.persistence.EntityManager eMoviePUEntityManager;
     private java.util.List<POJOS.FavoriteList> favoriteListList;
     private javax.persistence.Query favoriteListQuery;
     private javax.swing.JComboBox genreCombo;

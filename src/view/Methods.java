@@ -84,7 +84,7 @@ public class Methods {
                     genre.setId(element.getId());
                     genre.setName(element.getName());
                    
-                    em.merge(genre);// δημιουργώ τo query εισαγωγής/μεταβολής για το cw        
+                    em.persist(genre);// δημιουργώ τo query εισαγωγής       
                     
                 }   
             };
@@ -154,7 +154,7 @@ public class Methods {
                }
             }
             
-            em.merge(movie);// δημιουργώ τo query εισαγωγής/μεταβολής   
+            em.persist(movie);// δημιουργώ τo query εισαγωγής   
         }  
         em.flush();
         em.getTransaction().commit();// τέλος συναλλαγής

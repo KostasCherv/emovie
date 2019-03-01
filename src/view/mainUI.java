@@ -23,15 +23,12 @@ public class mainUI extends javax.swing.JFrame {
     private final  ListManager listmanager = new ListManager();
     private final SearchForm searchform = new SearchForm() ;
     private final StatisticsUI statistics = new StatisticsUI();
-        
-   // jdbc Connection
-    private static Statement stmt = null;
+    static EntityManager em = new database.DbManager().em;
+            
    //Το prefix της συνδεσης με το API
     public static String url = "https://api.themoviedb.org/3/";
     //to API key
     public final static String apiKey = "&api_key=5b0b2dc0ebd5b3f8f87d1d5222304db2";
-    private EntityManagerFactory emf; // Το EntityManagerFactory
-    public static EntityManager em; // Ο EntityManager 
    
     /**
      * Creates new form MainForm
@@ -41,9 +38,7 @@ public class mainUI extends javax.swing.JFrame {
         
         initComponents();
         this.setLocationRelativeTo(null);
-       
         // Σύνδεση με την βάση δεδομένων
-        connectToDb();
     }
 
     /**
@@ -219,18 +214,7 @@ public class mainUI extends javax.swing.JFrame {
     
     
     // Η παρακάτω μέθοδος πραγματοποιεί απόπειρα σύνδεσης με την Βάση Δεδομένων
-    public void connectToDb() {
-        try {
-            // Δημιουργία ενός EntityManagerFactory το οποίο συνδέεται στο
-            // Persistence Unit που αντιστοιχεί στην Βάση Δεδομένων μας
-            emf = Persistence.createEntityManagerFactory("eMoviePU");
-            // Δημιουργία ενός EntityManager
-            em = emf.createEntityManager();
-        } catch (Exception ex) {
-            System.err.println("dbNotConnect");
-            System.exit(1);
-        }
-    }
+    
     
     
     

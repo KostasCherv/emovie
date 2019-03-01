@@ -11,6 +11,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import POJOS.FavoriteList;
+import POJOS.Movie;
+import java.util.List;
 
 
 /**
@@ -279,7 +281,13 @@ public class ListManager extends javax.swing.JFrame {
         
         if(fl == null){
             return;
-        }     
+        }
+        
+        // Αφαίρεση ταινιών από τη λίστα
+        em.createQuery("Update Movie m SET m.favoriteListId = null where m.favoriteListId = :fl ")
+          .setParameter("fl", fl)
+          .executeUpdate();
+        
         em.remove(fl);
         em.flush();
         em.getTransaction().commit();
