@@ -35,8 +35,14 @@ public class SearchForm extends javax.swing.JFrame {
         this.setLocationRelativeTo(null);
         searchButton.setEnabled(false);
         
+        listCombo.setEnabled(false);
+        
+        genreCombo.setSelectedIndex(-1);
+        listCombo.setSelectedIndex(-1);
+        
         movieTable.getSelectionModel().addListSelectionListener(new ListSelectionListener(){
             public void valueChanged(ListSelectionEvent event) {
+                if(movieTable.getSelectedRowCount() == 0) return;
                 onSelectRow();
             }
         });
@@ -94,6 +100,12 @@ public class SearchForm extends javax.swing.JFrame {
 
         org.jdesktop.swingbinding.JComboBoxBinding jComboBoxBinding = org.jdesktop.swingbinding.SwingBindings.createJComboBoxBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, genreList, genreCombo);
         bindingGroup.addBinding(jComboBoxBinding);
+
+        genreCombo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                genreComboActionPerformed(evt);
+            }
+        });
 
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel1.setText("Επιλέξτε είδος:");
@@ -241,14 +253,17 @@ public class SearchForm extends javax.swing.JFrame {
     private void clearButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_clearButtonMouseClicked
         // TODO add your handling code here:
         yearTextField.setText("");
-        genreCombo.setSelectedIndex(0);
+        genreCombo.setSelectedIndex(-1);
         searchButton.setEnabled(false);
         
         DefaultTableModel tableModel = new DefaultTableModel();
         tableModel.setColumnIdentifiers(new String[]{"Τίτλος ταινίας", "Βαθμολογία", "Περιγραφή"});
         movieTable.setModel(tableModel);
         
+        listCombo.setEnabled(false);
+        listCombo.setSelectedIndex(-1);
         System.out.println("clear");
+        
     }//GEN-LAST:event_clearButtonMouseClicked
 
     private void searchButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_searchButtonMouseClicked
@@ -280,22 +295,21 @@ public class SearchForm extends javax.swing.JFrame {
     }//GEN-LAST:event_DeleteButtonActionPerformed
 
     private void listComboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_listComboActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_listComboActionPerformed
-
-    private void listComboMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_listComboMouseClicked
-        // TODO add your handling code here:
+        if(listCombo.getSelectedIndex() == -1){
+            return;
+        }
+        
         if(movieTable.getModel().getRowCount() == 0){
             return;
         }
+        
         String title = movieTable.getValueAt(movieTable.getSelectedRow(), 0).toString();
         
         FavoriteList fl = (FavoriteList)listCombo.getSelectedItem();
         EntityManager em = mainUI.em;
         
         List<Movie> m = em.createNamedQuery("Movie.findByTitle").setParameter("title", title).getResultList();
-        System.out.println(fl);
-        System.out.println(m);
+
         em.getTransaction().begin();
         m.get(0).setFavoriteListId(fl);
         em.persist(m.get(0));
@@ -304,8 +318,16 @@ public class SearchForm extends javax.swing.JFrame {
         if(title != null){
             System.out.println("Add " +  title + " in the list " + fl.getName() );
         }
-        System.out.println(String.valueOf(listCombo.getSelectedItem()));
+    }//GEN-LAST:event_listComboActionPerformed
+
+    private void listComboMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_listComboMouseClicked
+        // TODO add your handling code here:
     }//GEN-LAST:event_listComboMouseClicked
+
+    private void genreComboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_genreComboActionPerformed
+        // TODO add your handling code here:
+       setSearchButtonStatus();
+    }//GEN-LAST:event_genreComboActionPerformed
 
     private void setSearchButtonStatus(){
         if(yearTextField.getText().isEmpty()){
@@ -317,29 +339,28 @@ public class SearchForm extends javax.swing.JFrame {
         }
     }
     
-    public void onSelectRow(){
-       //get selected item
-        
-        // find if fav list id
-        // if exists set combo box to this value
-        // else set combo box to empty
+    public void onSelectRow(){        
        String title = movieTable.getValueAt(movieTable.getSelectedRow(), 0).toString();
        EntityManager em = mainUI.em;
        List<POJOS.Movie> m = em.createNamedQuery("Movie.findByTitle").setParameter("title", title).getResultList();
-//       List<POJOS.Movie> movieList = em.createQuery("SELECT f FROM FavoriteList f WHERE f.name = :genreName and m.releaseDate >= :date")
-//                    .setParameter("genreName", genreName)
-//                    .getResultList();
-       String name;
+       
+       listCombo.setEnabled(true);
+       
        if(m.get(0).getFavoriteListId() != null){
-            name = m.get(0).getFavoriteListId().getName();
-           System.out.print("123" + name);
+            FavoriteList fl = m.get(0).getFavoriteListId();
+           setSelectedList(fl);
        }else {
+           listCombo.setSelectedIndex(-1);
            System.out.println("Not found list");
        }
        System.out.println(title);
        
     }
     
+    public void setSelectedList(FavoriteList fl){
+        listCombo.setEnabled(true);
+        listCombo.setSelectedItem(fl);
+    }
     
    
     public void updateTableData(String year, String genreName){
