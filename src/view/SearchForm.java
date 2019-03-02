@@ -17,6 +17,7 @@ import java.util.Locale;
 import javax.persistence.EntityManager;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.plaf.basic.BasicComboBoxRenderer;
@@ -133,7 +134,7 @@ public class SearchForm extends javax.swing.JFrame {
             }
         });
 
-        clearButton.setText("Καθαρισμός");
+        clearButton.setText("Καθαρισμός Κριτηρίων");
         clearButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 clearButtonMouseClicked(evt);
@@ -272,6 +273,11 @@ public class SearchForm extends javax.swing.JFrame {
 
     private void searchButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_searchButtonMouseClicked
         // TODO add your handling code here:
+        System.out.println("click");
+        if(searchButton.isEnabled() == false){
+           JOptionPane.showMessageDialog(null,"Εισάγετε μία έγκυρη χρονολογία");
+           return;
+        }
         String genre = genreCombo.getSelectedItem().toString();
         String year = yearTextField.getText();
         updateTableData(year, genre);
@@ -361,6 +367,7 @@ public class SearchForm extends javax.swing.JFrame {
         if(title != null){
             System.out.println("Add " +  title + " in the list " + fl.getName() );
         }
+        DeleteButton.setEnabled(true);
     }//GEN-LAST:event_listComboActionPerformed
 
     private void listComboMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_listComboMouseClicked
@@ -384,6 +391,7 @@ public class SearchForm extends javax.swing.JFrame {
     
     public void onSelectRow(){
        DeleteButton.setEnabled(false);
+       
        String title = movieTable.getValueAt(movieTable.getSelectedRow(), 0).toString();
        EntityManager em = mainUI.em;
        Movie m = em.createNamedQuery("Movie.findByTitle", Movie.class).setParameter("title", title).getSingleResult();
@@ -403,7 +411,7 @@ public class SearchForm extends javax.swing.JFrame {
     
     public void setSelectedList(FavoriteList fl){
         listCombo.setEnabled(true);
-        listCombo.setSelectedItem(fl);
+        listCombo.setSelectedItem(fl.getName());
     }
     
    
@@ -419,6 +427,7 @@ public class SearchForm extends javax.swing.JFrame {
         }
         catch(Exception e) {
            //TODO new prompt error message
+            JOptionPane.showMessageDialog(null,"Εισάγετε μία έγκυρη χρονολογία");
         } 
 
         List<POJOS.Movie> movieList = em.createQuery("SELECT m FROM Movie m WHERE m.genreId.name = :genreName and m.releaseDate >= :date")
