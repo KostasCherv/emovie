@@ -22,6 +22,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.plaf.basic.BasicComboBoxRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableRowSorter;
 
 
 
@@ -327,10 +328,15 @@ public class SearchForm extends javax.swing.JFrame {
             return;
         }
 
-        String title = movieTable.getValueAt(movieTable.getSelectedRow(), 0).toString();
+        String title = movieTable
+                .getValueAt(movieTable.getSelectedRow(), 0)
+                .toString();
         
         EntityManager em = mainUI.em;
-        Movie m = em.createNamedQuery("Movie.findByTitle", Movie.class).setParameter("title", title).getSingleResult();
+        Movie m = em
+                .createNamedQuery("Movie.findByTitle", Movie.class)
+                .setParameter("title", title)
+                .getSingleResult();
 
         em.getTransaction().begin();
         m.setFavoriteListId(null);
@@ -349,15 +355,23 @@ public class SearchForm extends javax.swing.JFrame {
             return;
         }
         
-        String title = movieTable.getValueAt(movieTable.getSelectedRow(), 0).toString();
+        String title = movieTable
+                .getValueAt(movieTable.getSelectedRow(), 0)
+                .toString();
         
         String name = (String)listCombo.getSelectedItem();
         
         EntityManager em = mainUI.em;
         
-        FavoriteList fl = em.createNamedQuery("FavoriteList.findByName", FavoriteList.class).setParameter("name", name).getSingleResult();
+        FavoriteList fl = em
+                .createNamedQuery("FavoriteList.findByName", FavoriteList.class)
+                .setParameter("name", name)
+                .getSingleResult();
 
-        Movie m = em.createNamedQuery("Movie.findByTitle", Movie.class).setParameter("title", title).getSingleResult();
+        Movie m = em
+                .createNamedQuery("Movie.findByTitle", Movie.class)
+                .setParameter("title", title)
+                .getSingleResult();
 
         em.getTransaction().begin();
         m.setFavoriteListId(fl);
@@ -394,7 +408,10 @@ public class SearchForm extends javax.swing.JFrame {
        
        String title = movieTable.getValueAt(movieTable.getSelectedRow(), 0).toString();
        EntityManager em = mainUI.em;
-       Movie m = em.createNamedQuery("Movie.findByTitle", Movie.class).setParameter("title", title).getSingleResult();
+       Movie m = em
+               .createNamedQuery("Movie.findByTitle", Movie.class)
+               .setParameter("title", title)
+               .getSingleResult();
        
        listCombo.setEnabled(true);
        
@@ -419,10 +436,13 @@ public class SearchForm extends javax.swing.JFrame {
         EntityManager em = mainUI.em;
         
         SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy", Locale.ENGLISH);
- 
-        String dateInString = "1-Jan-" + year;
+            
         Date date = null;
         try {
+            if(Integer.parseInt(year) > 2100){
+                throw new Exception();
+            }
+            String dateInString = "1-Jan-" + year;
             date = formatter.parse(dateInString);
         }
         catch(Exception e) {
@@ -430,18 +450,24 @@ public class SearchForm extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null,"Εισάγετε μία έγκυρη χρονολογία");
         } 
 
-        List<POJOS.Movie> movieList = em.createQuery("SELECT m FROM Movie m WHERE m.genreId.name = :genreName and m.releaseDate >= :date")
+        List<POJOS.Movie> movieList = em
+                    .createQuery("SELECT m FROM Movie m WHERE m.genreId.name = :genreName and m.releaseDate >= :date")
                     .setParameter("genreName", genreName)
                     .setParameter("date", date)
                     .getResultList();
                       
         DefaultTableModel tableModel = new DefaultTableModel();
         tableModel.setColumnIdentifiers(new String[]{"Τίτλος ταινίας", "Βαθμολογία", "Περιγραφή"});
+        movieTable.setModel(tableModel);
+
+        TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<DefaultTableModel>(tableModel);
+        sorter.setSortable(0, false);
+        sorter.setSortable(2, false);
+        movieTable.setRowSorter(sorter);
         
         for (POJOS.Movie m : movieList) {
             tableModel.addRow(new String[]{m.getTitle(), m.getRating().toString(), m.getOverview()});
         }
-        movieTable.setModel(tableModel);
     }
     
      public void setInitialComponentsState(){
@@ -455,7 +481,6 @@ public class SearchForm extends javax.swing.JFrame {
         DefaultTableModel tableModel = new DefaultTableModel();
         tableModel.setColumnIdentifiers(new String[]{"Τίτλος ταινίας", "Βαθμολογία", "Περιγραφή"});
         movieTable.setModel(tableModel);
-        
     }
     
   
