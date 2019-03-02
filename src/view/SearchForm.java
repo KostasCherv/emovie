@@ -8,6 +8,7 @@ package view;
 import POJOS.FavoriteList;
 import POJOS.Genre;
 import POJOS.Movie;
+import controller.ApiController;
 import java.awt.Component;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -31,7 +32,7 @@ import javax.swing.table.TableRowSorter;
  * @author rodius
  */
 public class SearchForm extends javax.swing.JFrame {
-    javax.persistence.EntityManager em = mainUI.em;
+    EntityManager em = ApiController.em;
 
     /**
      * Creates new form SearchForm
@@ -88,10 +89,9 @@ public class SearchForm extends javax.swing.JFrame {
     private void initComponents() {
         bindingGroup = new org.jdesktop.beansbinding.BindingGroup();
 
-        javax.persistence.EntityManager eMoviePUEntityManager = java.beans.Beans.isDesignTime() ? null : javax.persistence.Persistence.createEntityManagerFactory("eMoviePU").createEntityManager();
-        genreQuery = java.beans.Beans.isDesignTime() ? null : mainUI.em.createQuery("SELECT g FROM Genre g");
+        genreQuery = java.beans.Beans.isDesignTime() ? null : em.createQuery("SELECT g FROM Genre g");
         genreList = java.beans.Beans.isDesignTime() ? java.util.Collections.emptyList() : org.jdesktop.observablecollections.ObservableCollections.observableList(genreQuery.getResultList());
-        favoriteListQuery = java.beans.Beans.isDesignTime() ? null : eMoviePUEntityManager.createQuery("SELECT f FROM FavoriteList f");
+        favoriteListQuery = java.beans.Beans.isDesignTime() ? null : em     .createQuery("SELECT f FROM FavoriteList f");
         favoriteListList = java.beans.Beans.isDesignTime() ? java.util.Collections.emptyList() : org.jdesktop.observablecollections.ObservableCollections.observableList(favoriteListQuery.getResultList());
         jPanel1 = new javax.swing.JPanel();
         genreCombo = new javax.swing.JComboBox();
@@ -331,7 +331,6 @@ public class SearchForm extends javax.swing.JFrame {
                 .getValueAt(movieTable.getSelectedRow(), 0)
                 .toString();
         
-        EntityManager em = mainUI.em;
         Movie m = em
                 .createNamedQuery("Movie.findByTitle", Movie.class)
                 .setParameter("title", title)
@@ -360,7 +359,6 @@ public class SearchForm extends javax.swing.JFrame {
         
         String name = (String)listCombo.getSelectedItem();
         
-        EntityManager em = mainUI.em;
         
         FavoriteList fl = em
                 .createNamedQuery("FavoriteList.findByName", FavoriteList.class)
@@ -406,7 +404,6 @@ public class SearchForm extends javax.swing.JFrame {
        DeleteButton.setEnabled(false);
        
        String title = movieTable.getValueAt(movieTable.getSelectedRow(), 0).toString();
-       EntityManager em = mainUI.em;
        Movie m = em
                .createNamedQuery("Movie.findByTitle", Movie.class)
                .setParameter("title", title)
@@ -432,7 +429,6 @@ public class SearchForm extends javax.swing.JFrame {
     
    
     public void updateTableData(String year, String genreName){
-        EntityManager em = mainUI.em;
         
         SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy", Locale.ENGLISH);
             
@@ -459,10 +455,10 @@ public class SearchForm extends javax.swing.JFrame {
         tableModel.setColumnIdentifiers(new String[]{"Τίτλος ταινίας", "Βαθμολογία", "Περιγραφή"});
         movieTable.setModel(tableModel);
 
-        TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<DefaultTableModel>(tableModel);
-        sorter.setSortable(0, false);
-        sorter.setSortable(2, false);
-        movieTable.setRowSorter(sorter);
+//        TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<DefaultTableModel>(tableModel);
+//        sorter.setSortable(0, false);
+//        sorter.setSortable(2, false);
+//        movieTable.setRowSorter(sorter);
         
         for (POJOS.Movie m : movieList) {
             tableModel.addRow(new String[]{m.getTitle(), m.getRating().toString(), m.getOverview()});
@@ -470,16 +466,21 @@ public class SearchForm extends javax.swing.JFrame {
     }
     
      public void setInitialComponentsState(){
+        yearTextField.setText("");
+
         searchButton.setEnabled(false);
         listCombo.setEnabled(false);
         DeleteButton.setEnabled(false);
+        
         genreCombo.setSelectedIndex(-1);
         listCombo.setSelectedIndex(-1);
-        
-        yearTextField.setText("");
+
         DefaultTableModel tableModel = new DefaultTableModel();
         tableModel.setColumnIdentifiers(new String[]{"Τίτλος ταινίας", "Βαθμολογία", "Περιγραφή"});
+        movieTable.setRowSorter(null);
         movieTable.setModel(tableModel);
+        
+      
     }
     
   

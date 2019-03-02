@@ -6,6 +6,7 @@
 package view;
 
 import POJOS.Movie;
+import controller.ApiController;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.swing.table.DefaultTableModel;
@@ -19,6 +20,7 @@ public class StatisticsUI extends javax.swing.JFrame {
     /**
      * Creates new form StatisticsUI
      */
+    EntityManager em = ApiController.em;
     public StatisticsUI() {
         initComponents();
         this.setLocationRelativeTo(null);
@@ -127,8 +129,6 @@ public class StatisticsUI extends javax.swing.JFrame {
 
     private void top10ButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_top10ButtonActionPerformed
         System.out.println("top 10 movies");
-       
-        EntityManager em = mainUI.em;
         
         List <Movie> movieList = em.createNativeQuery("Select m.id, m.title, m.rating from Movie m order by rating DESC FETCH FIRST 10 ROWS ONLY", Movie.class).getResultList();
         
@@ -145,9 +145,7 @@ public class StatisticsUI extends javax.swing.JFrame {
 
     private void topPerListButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_topPerListButtonActionPerformed
         System.out.println("top movies per list");
-        
-        EntityManager em = mainUI.em;
-        
+                
         List <Movie> movieList = em.createNativeQuery("select m.id, m.title from movie m where m.FAVORITE_LIST_ID is not null and m.rating = any\n" +
             "(select Max(M.RATING) from movie M where m.FAVORITE_LIST_ID = m.FAVORITE_LIST_ID group by M.FAVORITE_LIST_ID)", Movie.class).getResultList();
         

@@ -12,6 +12,8 @@ import javax.persistence.Persistence;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import POJOS.FavoriteList;
+import controller.ApiController;
+import database.DbManager;
 
 /**
  *
@@ -23,22 +25,14 @@ public class mainUI extends javax.swing.JFrame {
     private final  ListManager listmanager = new ListManager();
     private final SearchForm searchform = new SearchForm() ;
     private final StatisticsUI statistics = new StatisticsUI();
-    static EntityManager em = new database.DbManager().em;
-            
-   //Το prefix της συνδεσης με το API
-    public static String url = "https://api.themoviedb.org/3/";
-    //to API key
-    public final static String apiKey = "&api_key=5b0b2dc0ebd5b3f8f87d1d5222304db2";
    
     /**
      * Creates new form MainForm
      */
     
     public mainUI() {
-        
         initComponents();
         this.setLocationRelativeTo(null);
-        // Σύνδεση με την βάση δεδομένων
     }
 
     /**
@@ -191,13 +185,13 @@ public class mainUI extends javax.swing.JFrame {
 
     private void jButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MouseClicked
         // Διαγραφή των δεδομένων που υπάρχουν στους πίνακες
-        Methods.deleteDataFromTables();
+        DbManager.deleteDataFromTables();
         // Διάβασε από το API τα είδη των ταινιών και αποθήκευσε τα στη βάση
-        Methods.getMovieGenres();
+        ApiController.getMovieGenres();
         // Διάβασε από το API τις ταινίες και αποθήκευσε τις στη βάση        
-        Methods.getMovies();
-        Component frame = null;
-        JOptionPane.showMessageDialog(frame, "Η ανάκτηση των δεδομένων ολοκληρώθηκε.");
+        ApiController.getMovies();
+        
+        JOptionPane.showMessageDialog(null, "Η ανάκτηση των δεδομένων ολοκληρώθηκε.");
     }//GEN-LAST:event_jButton1MouseClicked
 
 

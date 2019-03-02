@@ -12,6 +12,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import POJOS.FavoriteList;
 import POJOS.Movie;
+import controller.ApiController;
 import java.util.List;
 
 
@@ -23,12 +24,14 @@ public class ListManager extends javax.swing.JFrame {
     /**
      * Creates new form ListManager
      */
+    EntityManager em = ApiController.em;
     public ListManager() {
         initComponents();
         this.setLocationRelativeTo(null);
         EditButton.setEnabled(false);
         DeleteButton.setEnabled(false);
     }
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -40,8 +43,7 @@ public class ListManager extends javax.swing.JFrame {
     private void initComponents() {
         bindingGroup = new org.jdesktop.beansbinding.BindingGroup();
 
-        em = java.beans.Beans.isDesignTime() ? null : javax.persistence.Persistence.createEntityManagerFactory("eMoviePU").createEntityManager();
-        favoriteListQuery = java.beans.Beans.isDesignTime() ? null : em.createQuery("SELECT f FROM FavoriteList f");
+        favoriteListQuery = java.beans.Beans.isDesignTime() ? null : em  .createQuery("SELECT f FROM FavoriteList f");
         favoriteListList = java.beans.Beans.isDesignTime() ? java.util.Collections.emptyList() : org.jdesktop.observablecollections.ObservableCollections.observableList(favoriteListQuery.getResultList());
         jPanel1 = new javax.swing.JPanel();
         CreateButton = new javax.swing.JButton();
@@ -174,7 +176,6 @@ public class ListManager extends javax.swing.JFrame {
         if(listName == null){
             return;
         }
-        EntityManager em = mainUI.em; // Ο EntityManager
 
         em.getTransaction().begin(); //ξεκινάω μια καινούργια συναλλαγή
 
@@ -216,7 +217,6 @@ public class ListManager extends javax.swing.JFrame {
             return;
         }
         
-        EntityManager em = mainUI.em; // Ο EntityManager
         em.getTransaction().begin();
         FavoriteList fl = em
                 .createNamedQuery("FavoriteList.findByName", FavoriteList.class)
@@ -246,7 +246,6 @@ public class ListManager extends javax.swing.JFrame {
     }//GEN-LAST:event_formWindowGainedFocus
     
     public void updateListData(){
-        EntityManager em = mainUI.em;
         em.getTransaction().begin();
         favoriteListList = em
                     .createNamedQuery("FavoriteList.findAll", FavoriteList.class)
@@ -272,7 +271,6 @@ public class ListManager extends javax.swing.JFrame {
             return;
         }
         
-        EntityManager em = mainUI.em;
         em.getTransaction().begin();
         FavoriteList fl = em
                 .createNamedQuery("FavoriteList.findByName", FavoriteList.class)
@@ -309,7 +307,6 @@ public class ListManager extends javax.swing.JFrame {
     private javax.swing.JButton DeleteButton;
     private javax.swing.JButton EditButton;
     private javax.swing.JList<String> ListOfLists;
-    private javax.persistence.EntityManager em;
     private java.util.List<POJOS.FavoriteList> favoriteListList;
     private javax.persistence.Query favoriteListQuery;
     private javax.swing.JPanel jPanel1;
