@@ -274,9 +274,8 @@ public class SearchForm extends javax.swing.JFrame {
 
     private void searchButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_searchButtonMouseClicked
         // TODO add your handling code here:
-        System.out.println("click");
         if(searchButton.isEnabled() == false){
-           JOptionPane.showMessageDialog(null,"Εισάγετε μία έγκυρη χρονολογία");
+           JOptionPane.showMessageDialog(null,"Εισάγετε τα στοιχεία και στα δύο πεδία πρώτα");
            return;
         }
         String genre = genreCombo.getSelectedItem().toString();
@@ -440,14 +439,14 @@ public class SearchForm extends javax.swing.JFrame {
         Date date = null;
         try {
             if(Integer.parseInt(year) > 2100){
-                throw new Exception();
+                throw new Exception("Εισάγετε μία έγκυρη χρονολογία");
             }
             String dateInString = "1-Jan-" + year;
             date = formatter.parse(dateInString);
         }
         catch(Exception e) {
            //TODO new prompt error message
-            JOptionPane.showMessageDialog(null,"Εισάγετε μία έγκυρη χρονολογία");
+            JOptionPane.showMessageDialog(null,e.getMessage());
         } 
 
         List<POJOS.Movie> movieList = em

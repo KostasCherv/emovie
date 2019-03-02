@@ -5,6 +5,11 @@
  */
 package view;
 
+import POJOS.Movie;
+import java.util.List;
+import javax.persistence.EntityManager;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author rodius
@@ -17,6 +22,10 @@ public class StatisticsUI extends javax.swing.JFrame {
     public StatisticsUI() {
         initComponents();
         this.setLocationRelativeTo(null);
+        
+        DefaultTableModel tableModel = new DefaultTableModel();
+        tableModel.setColumnIdentifiers(new String[]{});
+        topmoviesTable.setModel(tableModel);
     }
 
     /**
@@ -29,19 +38,26 @@ public class StatisticsUI extends javax.swing.JFrame {
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        top10Button = new javax.swing.JButton();
+        topPerListButton = new javax.swing.JButton();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        topmoviesTable = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
-        jButton1.setText("Οι Καλύτερες 10 Ταινίες");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        top10Button.setText("Οι Καλύτερες 10 Ταινίες");
+        top10Button.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                top10ButtonActionPerformed(evt);
             }
         });
 
-        jButton2.setText("Οι Καλύτερες Ταινίες ανά Λίστα");
+        topPerListButton.setText("Οι Καλύτερες Ταινίες ανά Λίστα");
+        topPerListButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                topPerListButtonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -50,30 +66,48 @@ public class StatisticsUI extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(142, 142, 142)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jButton2)
-                    .addComponent(jButton1))
+                    .addComponent(topPerListButton)
+                    .addComponent(top10Button))
                 .addContainerGap(132, Short.MAX_VALUE))
         );
 
-        jPanel1Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jButton1, jButton2});
+        jPanel1Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {top10Button, topPerListButton});
 
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jButton1)
+                .addComponent(top10Button)
                 .addGap(18, 18, 18)
-                .addComponent(jButton2)
+                .addComponent(topPerListButton)
                 .addContainerGap(25, Short.MAX_VALUE))
         );
+
+        topmoviesTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane2.setViewportView(topmoviesTable);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(27, 27, 27)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(27, 27, 27)
+                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(53, 53, 53)
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 432, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(37, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -81,23 +115,54 @@ public class StatisticsUI extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGap(20, 20, 20)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(373, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 276, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void top10ButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_top10ButtonActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton1ActionPerformed
+        System.out.println("top 10 movies");
+        EntityManager em = mainUI.em;
+        
+        List <Movie> movieList = em.createNativeQuery("Select m.id, m.title, m.rating from Movie m order by rating DESC FETCH FIRST 10 ROWS ONLY", Movie.class).getResultList();
+        
+        DefaultTableModel tableModel = new DefaultTableModel();
+        tableModel.setColumnIdentifiers(new String[]{"Τίτλος ταινίας", "Βαθμολογία"});
+        topmoviesTable.setModel(tableModel);
+        
+        for (POJOS.Movie m : movieList) {
+            tableModel.addRow(new String[]{m.getTitle(), m.getRating().toString()});
+        }
+    }//GEN-LAST:event_top10ButtonActionPerformed
+
+    private void topPerListButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_topPerListButtonActionPerformed
+        System.out.println("top movies per list");
+        
+        EntityManager em = mainUI.em;
+        
+        List <Movie> movieList = em.createNativeQuery("", Movie.class).getResultList();
+        System.out.println(movieList);
+        
+        DefaultTableModel tableModel = new DefaultTableModel();
+        tableModel.setColumnIdentifiers(new String[]{"Τίτλος ταινίας"});
+        topmoviesTable.setModel(tableModel);
+        
+        for (POJOS.Movie m : movieList) {
+            tableModel.addRow(new String[]{m.getTitle()});
+        }
+    }//GEN-LAST:event_topPerListButtonActionPerformed
 
     
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JButton top10Button;
+    private javax.swing.JButton topPerListButton;
+    private javax.swing.JTable topmoviesTable;
     // End of variables declaration//GEN-END:variables
 }
