@@ -26,6 +26,8 @@ public class StatisticsUI extends javax.swing.JFrame {
         DefaultTableModel tableModel = new DefaultTableModel();
         tableModel.setColumnIdentifiers(new String[]{});
         topmoviesTable.setModel(tableModel);
+        
+        top10Button.doClick();
     }
 
     /**
@@ -124,19 +126,21 @@ public class StatisticsUI extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void top10ButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_top10ButtonActionPerformed
-        // TODO add your handling code here:
         System.out.println("top 10 movies");
+       
         EntityManager em = mainUI.em;
         
         List <Movie> movieList = em.createNativeQuery("Select m.id, m.title, m.rating from Movie m order by rating DESC FETCH FIRST 10 ROWS ONLY", Movie.class).getResultList();
         
         DefaultTableModel tableModel = new DefaultTableModel();
         tableModel.setColumnIdentifiers(new String[]{"Τίτλος ταινίας", "Βαθμολογία"});
-        topmoviesTable.setModel(tableModel);
-        
-        for (POJOS.Movie m : movieList) {
+                
+        for (Movie m : movieList) {
             tableModel.addRow(new String[]{m.getTitle(), m.getRating().toString()});
         }
+        
+        topmoviesTable.setModel(tableModel);
+
     }//GEN-LAST:event_top10ButtonActionPerformed
 
     private void topPerListButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_topPerListButtonActionPerformed
@@ -144,16 +148,18 @@ public class StatisticsUI extends javax.swing.JFrame {
         
         EntityManager em = mainUI.em;
         
-        List <Movie> movieList = em.createNativeQuery("", Movie.class).getResultList();
-        System.out.println(movieList);
+        List <Movie> movieList = em.createNativeQuery("select m.id, m.title from movie m where m.FAVORITE_LIST_ID is not null and m.rating = any\n" +
+            "(select Max(M.RATING) from movie M where m.FAVORITE_LIST_ID = m.FAVORITE_LIST_ID group by M.FAVORITE_LIST_ID)", Movie.class).getResultList();
         
         DefaultTableModel tableModel = new DefaultTableModel();
         tableModel.setColumnIdentifiers(new String[]{"Τίτλος ταινίας"});
-        topmoviesTable.setModel(tableModel);
         
-        for (POJOS.Movie m : movieList) {
+        for (Movie m : movieList) {
             tableModel.addRow(new String[]{m.getTitle()});
         }
+        
+        topmoviesTable.setModel(tableModel);
+
     }//GEN-LAST:event_topPerListButtonActionPerformed
 
     
