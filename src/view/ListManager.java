@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package view;
 
 import javax.persistence.EntityManager;
@@ -11,9 +6,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import POJOS.FavoriteList;
-import POJOS.Movie;
 import controller.ApiController;
-import java.util.List;
 
 
 /**
@@ -32,7 +25,6 @@ public class ListManager extends javax.swing.JFrame {
         DeleteButton.setEnabled(false);
     }
     
-
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -50,7 +42,7 @@ public class ListManager extends javax.swing.JFrame {
         EditButton = new javax.swing.JButton();
         DeleteButton = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
-        ListOfLists = new javax.swing.JList<String>();
+        ListOfLists = new javax.swing.JList<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         addWindowFocusListener(new java.awt.event.WindowFocusListener() {
@@ -112,13 +104,13 @@ public class ListManager extends javax.swing.JFrame {
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 163, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 185, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(EditButton)
-                    .addComponent(CreateButton)
-                    .addComponent(DeleteButton))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(EditButton, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(DeleteButton, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(CreateButton, javax.swing.GroupLayout.Alignment.TRAILING))
+                .addContainerGap())
         );
 
         jPanel1Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {CreateButton, DeleteButton, EditButton});
@@ -133,24 +125,18 @@ public class ListManager extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addComponent(DeleteButton)
                 .addGap(160, 160, 160))
-            .addComponent(jScrollPane2)
+            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 403, Short.MAX_VALUE)
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+            .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+            .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         bindingGroup.bind();
@@ -158,6 +144,7 @@ public class ListManager extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
     
+    //διαγραφή της επιλεγόμενος λίστας
     private void DeleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DeleteButtonActionPerformed
         int[] selectedValues = ListOfLists.getSelectedIndices();
         
@@ -171,7 +158,9 @@ public class ListManager extends javax.swing.JFrame {
         
     }//GEN-LAST:event_DeleteButtonActionPerformed
 
+    //δημιουργία νέας λίστας
     private void CreateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CreateButtonActionPerformed
+        //εμφάνιση μηνύματος διαλόγου που μας ζητά να δώσουμε όνομα στη λίστα μας
         String listName = JOptionPane.showInputDialog("Δώσε το όνομα της λίστας:" );
         if(listName == null){
             return;
@@ -184,11 +173,12 @@ public class ListManager extends javax.swing.JFrame {
 
         em.persist(newList);
         em.flush();
-        em.getTransaction().commit(); //Αποθήκευση στη βάση των αλλαγών
-
+        em.getTransaction().commit(); //Αποθήκευση  των αλλαγών στη βάση
+        //εμφάνιση μηνύματος επιτυχούς δημιουργίας της λίστας
         System.out.println("New List successfully created: " + listName);
     }//GEN-LAST:event_CreateButtonActionPerformed
 
+    //πλήκτρο επεξεργασίας υπάρχουσας λίστας
     private void EditButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_EditButtonActionPerformed
         int i = ListOfLists.getSelectedIndex();
         if(i == -1){
@@ -230,21 +220,21 @@ public class ListManager extends javax.swing.JFrame {
         editedFl.setName(newName);
         em.merge(editedFl);
 
-        em.getTransaction().commit(); //Αποθήκευση στη βάση των αλλαγών
+        em.getTransaction().commit(); //Αποθήκευση  των αλλαγών στη βάση
+        //εμφάνιση μηνύματος επιτυχούς τροποποίησης
         System.out.println("List successfully updated to " + newName);
     }//GEN-LAST:event_EditButtonActionPerformed
 
     private void ListOfListsMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ListOfListsMouseClicked
-        // TODO add your handling code here:
-        setButtonsStatus();
+           setButtonsStatus();
     }//GEN-LAST:event_ListOfListsMouseClicked
 
     private void formWindowGainedFocus(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowGainedFocus
-        // TODO add your handling code here:
         updateListData();
         setButtonsStatus();
     }//GEN-LAST:event_formWindowGainedFocus
     
+    //μέθοδος ενημέρωσης της λίστας με τις αγαπημένες λίστες
     public void updateListData(){
         em.getTransaction().begin();
         favoriteListList = em
@@ -259,6 +249,7 @@ public class ListManager extends javax.swing.JFrame {
         }
         ListOfLists.setListData(arr);
     }
+    // μέθοδος διαγραφής λίστας
     
     public void deleteFavoriteList(int i){
         String name = ListOfLists.getModel().getElementAt(i);
@@ -292,6 +283,7 @@ public class ListManager extends javax.swing.JFrame {
         System.out.println("List successfully deleted:" + name);
     }
     
+    //μέθοδος εμφάνισης των πλήκτρων
     public void setButtonsStatus(){
         int i = ListOfLists.getSelectedIndex();
         if(i == -1){
@@ -302,6 +294,7 @@ public class ListManager extends javax.swing.JFrame {
         EditButton.setEnabled(true);
         DeleteButton.setEnabled(true);
     }
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton CreateButton;
     private javax.swing.JButton DeleteButton;
