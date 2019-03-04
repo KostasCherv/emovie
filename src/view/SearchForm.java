@@ -23,6 +23,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.plaf.basic.BasicComboBoxRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableRowSorter;
 
 
 
@@ -341,13 +342,11 @@ public class SearchForm extends javax.swing.JFrame {
             return;
         }
 
-        String title = movieTable
-                .getValueAt(movieTable.getSelectedRow(), 0)
-                .toString();
+       Integer id = Integer.parseInt(movieTable.getModel().getValueAt(movieTable.getSelectedRow(), 3).toString());
         
         Movie m = em
-                .createNamedQuery("Movie.findByTitle", Movie.class)
-                .setParameter("title", title)
+                .createNamedQuery("Movie.findById", Movie.class)
+                .setParameter("id", id)
                 .getSingleResult();
 
         em.getTransaction().begin();
@@ -367,9 +366,7 @@ public class SearchForm extends javax.swing.JFrame {
             return;
         }
         
-        String title = movieTable
-                .getValueAt(movieTable.getSelectedRow(), 0)
-                .toString();
+       Integer id = Integer.parseInt(movieTable.getModel().getValueAt(movieTable.getSelectedRow(), 3).toString());
         
         String name = (String)listCombo.getSelectedItem();
         
@@ -380,8 +377,8 @@ public class SearchForm extends javax.swing.JFrame {
                 .getSingleResult();
 
         Movie m = em
-                .createNamedQuery("Movie.findByTitle", Movie.class)
-                .setParameter("title", title)
+                .createNamedQuery("Movie.findById", Movie.class)
+                .setParameter("id", id)
                 .getSingleResult();
 
         em.getTransaction().begin();
@@ -389,8 +386,8 @@ public class SearchForm extends javax.swing.JFrame {
         em.persist(m);
         em.getTransaction().commit();
         
-        if(title != null){
-            System.out.println("Add " +  title + " in the list " + fl.getName() );
+        if(id != null){
+            System.out.println("Add " +  m.getTitle() + " in the list " + fl.getName() );
         }
         DeleteButton.setEnabled(true);
     }//GEN-LAST:event_listComboActionPerformed
@@ -420,11 +417,13 @@ public class SearchForm extends javax.swing.JFrame {
     
     public void onSelectRow(){
        DeleteButton.setEnabled(false);
+        
+       Integer id = Integer.parseInt(movieTable.getModel().getValueAt(movieTable.getSelectedRow(), 3).toString());
        
-       String title = movieTable.getValueAt(movieTable.getSelectedRow(), 0).toString();
+       System.out.println("Selected movie: " + id);
        Movie m = em
-               .createNamedQuery("Movie.findByTitle", Movie.class)
-               .setParameter("title", title)
+               .createNamedQuery("Movie.findById", Movie.class)
+               .setParameter("id", id)
                .getSingleResult();
        
        listCombo.setEnabled(true);
@@ -436,7 +435,6 @@ public class SearchForm extends javax.swing.JFrame {
        }else {
            listCombo.setSelectedIndex(-1);
        }
-       System.out.println(title);
        
     }
     
@@ -459,7 +457,6 @@ public class SearchForm extends javax.swing.JFrame {
             date = formatter.parse(dateInString);
         }
         catch(Exception e) {
-           //TODO new prompt error message
             JOptionPane.showMessageDialog(null,e.getMessage());
         } 
 
@@ -470,13 +467,19 @@ public class SearchForm extends javax.swing.JFrame {
                     .getResultList();
                       
         DefaultTableModel tableModel = new DefaultTableModel();
-        tableModel.setColumnIdentifiers(new String[]{"Τίτλος ταινίας", "Βαθμολογία", "Περιγραφή"});
+        tableModel.setColumnIdentifiers(new String[]{ "Τίτλος ταινίας", "Βαθμολογία", "Περιγραφή", "Id" });
         movieTable.setModel(tableModel);
+        movieTable.removeColumn(movieTable.getColumnModel().getColumn(3));
 
+        TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<DefaultTableModel>(tableModel);
+        sorter.setSortable(0, false);
+        sorter.setSortable(2, false);
+        movieTable.setRowSorter(sorter);
         
         for (POJOS.Movie m : movieList) {
-            tableModel.addRow(new String[]{m.getTitle(), m.getRating().toString(), m.getOverview()});
+            tableModel.addRow(new String[]{ m.getTitle(), m.getRating().toString(), m.getOverview(), m.getId().toString()});
         }
+        
     }
     
      public void setInitialComponentsState(){
@@ -494,7 +497,6 @@ public class SearchForm extends javax.swing.JFrame {
         movieTable.setRowSorter(null);
         movieTable.setModel(tableModel);
         
-      
     }
     
   

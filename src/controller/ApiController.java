@@ -148,7 +148,7 @@ public class ApiController {
             for (int id : element.genre_ids) {
                if(genreIds.contains(id)){
                   movie.setGenreId(em.getReference(POJOS.Genre.class, id));
-                   break;
+                  break;
                }
             }
             
