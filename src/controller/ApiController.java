@@ -97,22 +97,23 @@ public class ApiController {
         }
     }  
     
-    //μέθοδος άντλησης τρέχοντων καιρικών συνθηκών από το api
-    //για όλες τις πόλεις και καταχώρησή τους στη Β.Δ.
+
     public static void getMovies() {
         try {
             String json;   
             Gson gson = new GsonBuilder().create();
             POJOS.MoviesResponse jsonResponse;
             //σύνδεση με το api και άντληση όλων των ειδών ταινιών
-            String webPage = url + "discover/movie?with_genres=28,878,10749&primary_release_date.gte=2000-01-01";
-            webPage += apiKey;
+            String webPage = url + "discover/movie?with_genres=28|878|10749&primary_release_date.gte=2000-01-01&api_key=5b0b2dc0ebd5b3f8f87d1d5222304db2";
+           // webPage += apiKey;
+            
+            
             json = readFromURL(webPage + "&page=1");
             //η αποκωδικοποίηση της μορφής του json
             jsonResponse = gson.fromJson(json, POJOS.MoviesResponse.class);
             
             saveMoviesOnDb(jsonResponse);
-            for(int i = 2; i <= jsonResponse.total_pages; i++){
+            for(int i = 2; i <= 40; i++){
                 json = readFromURL(webPage + "&page=" + i);
                 jsonResponse = gson.fromJson(json, POJOS.MoviesResponse.class);
                 saveMoviesOnDb(jsonResponse);
@@ -146,7 +147,7 @@ public class ApiController {
 
             for (int id : element.genre_ids) {
                if(genreIds.contains(id)){
-                   movie.setGenreId(em.getReference(POJOS.Genre.class, id));
+                  movie.setGenreId(em.getReference(POJOS.Genre.class, id));
                    break;
                }
             }
