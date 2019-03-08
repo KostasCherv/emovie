@@ -51,7 +51,8 @@ public class StatisticsUI extends javax.swing.JFrame {
         jPanel1.setBackground(new java.awt.Color(153, 153, 153));
 
         top10Button.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        top10Button.setText("Οι Καλύτερες 10 Ταινίες");
+        top10Button.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/gui/top10.png"))); // NOI18N
+        top10Button.setText(" Οι Καλύτερες 10 Ταινίες");
         top10Button.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED, new java.awt.Color(153, 153, 0), new java.awt.Color(153, 153, 0), new java.awt.Color(153, 153, 0), new java.awt.Color(153, 153, 0)));
         top10Button.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -60,6 +61,7 @@ public class StatisticsUI extends javax.swing.JFrame {
         });
 
         topPerListButton.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        topPerListButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/gui/topoflists.png"))); // NOI18N
         topPerListButton.setText("Οι Καλύτερες Ταινίες ανά Λίστα");
         topPerListButton.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED, new java.awt.Color(153, 153, 0), new java.awt.Color(153, 153, 0), new java.awt.Color(153, 153, 0), new java.awt.Color(153, 153, 0)));
         topPerListButton.addActionListener(new java.awt.event.ActionListener() {
@@ -106,13 +108,15 @@ public class StatisticsUI extends javax.swing.JFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(23, 23, 23)
-                .addComponent(top10Button)
-                .addGap(18, 18, 18)
-                .addComponent(topPerListButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 125, Short.MAX_VALUE)
+                .addComponent(top10Button, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(26, 26, 26)
+                .addComponent(topPerListButton, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 63, Short.MAX_VALUE)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 204, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
+
+        jPanel1Layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {top10Button, topPerListButton});
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
