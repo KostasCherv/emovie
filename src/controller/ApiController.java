@@ -113,7 +113,7 @@ public class ApiController {
             jsonResponse = gson.fromJson(json, POJOS.MoviesResponse.class);
             
             saveMoviesOnDb(jsonResponse);
-            for(int i = 2; i <= 40; i++){
+            for(int i = 2; i < 40; i++){
                 json = readFromURL(webPage + "&page=" + i);
                 jsonResponse = gson.fromJson(json, POJOS.MoviesResponse.class);
                 saveMoviesOnDb(jsonResponse);

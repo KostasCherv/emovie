@@ -41,9 +41,10 @@ public class SearchForm extends javax.swing.JFrame {
         initComponents();
         this.setLocationRelativeTo(null);
         
+        // θέτουμε την αρχική κατάσταση των πεδίων της φόρμας
         setInitialComponentsState();
         
-        
+        // προσθέτουμε έναν δέκτη γεγονότων στον πίνακα για την ανίχνευση της αλλαγής του επιλεγμένου στοιχείου
         movieTable.getSelectionModel().addListSelectionListener(new ListSelectionListener(){
             public void valueChanged(ListSelectionEvent event) {
                 if(event.getValueIsAdjusting() == true) return; // Μη κάνεις καμία ενέργεια αν δεν αλλάξει η τιμή
@@ -52,6 +53,7 @@ public class SearchForm extends javax.swing.JFrame {
             }
         });
         
+        // δημιουργούμε τους δικούς μας αποδέκτες δεδομένων για τα πεδία Jcombo
         class FavoriteListRenderer extends BasicComboBoxRenderer {
             public Component getListCellRendererComponent(
                 JList list, Object value, int index, boolean isSelected, boolean cellHasFocus){
@@ -147,9 +149,9 @@ public class SearchForm extends javax.swing.JFrame {
         clearButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/gui/search.clear.png"))); // NOI18N
         clearButton.setText("Καθαρισμός Κριτηρίων");
         clearButton.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED, new java.awt.Color(153, 153, 0), new java.awt.Color(153, 153, 0), new java.awt.Color(153, 153, 0), new java.awt.Color(153, 153, 0)));
-        clearButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                clearButtonMouseClicked(evt);
+        clearButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                clearButtonActionPerformed(evt);
             }
         });
 
@@ -157,9 +159,9 @@ public class SearchForm extends javax.swing.JFrame {
         searchButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/gui/search.srch.png"))); // NOI18N
         searchButton.setText("Αναζήτηση");
         searchButton.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED, new java.awt.Color(153, 153, 0), new java.awt.Color(153, 153, 0), new java.awt.Color(153, 153, 0), new java.awt.Color(153, 153, 0)));
-        searchButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                searchButtonMouseClicked(evt);
+        searchButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                searchButtonActionPerformed(evt);
             }
         });
 
@@ -187,11 +189,6 @@ public class SearchForm extends javax.swing.JFrame {
         DeleteButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/gui/search.delete.png"))); // NOI18N
         DeleteButton.setText("Διαγραφή από τη λίστα");
         DeleteButton.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED, new java.awt.Color(153, 153, 0), new java.awt.Color(153, 153, 0), new java.awt.Color(153, 153, 0), new java.awt.Color(153, 153, 0)));
-        DeleteButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                DeleteButtonMouseClicked(evt);
-            }
-        });
         DeleteButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 DeleteButtonActionPerformed(evt);
@@ -272,60 +269,36 @@ public class SearchForm extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void clearButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_clearButtonMouseClicked
-        // TODO add your handling code here:
-        setInitialComponentsState();
-    }//GEN-LAST:event_clearButtonMouseClicked
-
-    private void searchButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_searchButtonMouseClicked
-        // TODO add your handling code here:
-        if(searchButton.isEnabled() == false){
-           JOptionPane.showMessageDialog(null,"Εισάγετε στοιχεία και στα δύο πεδία αναζήτησης");
-           return;
-        }
-        String genre = genreCombo.getSelectedItem().toString();
-        String year = yearTextField.getText();
-        updateTableData(year, genre);
-    }//GEN-LAST:event_searchButtonMouseClicked
-
     private void yearTextFieldKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_yearTextFieldKeyReleased
         setSearchButtonStatus();
     }//GEN-LAST:event_yearTextFieldKeyReleased
 
     private void formWindowGainedFocus(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowGainedFocus
-       // TODO add your handling code here:
-       genreList = genreQuery.getResultList();
-       if(genreList.size() > 0){
-            List<String> gelist = new ArrayList<String>();
-            for(Genre g: genreList){
-                gelist.add(g.getName());
-            }
-            DefaultComboBoxModel gemodel = new DefaultComboBoxModel(gelist.toArray());
-            genreCombo.setModel(gemodel);
-       }
-        
-
-       favoriteListList = favoriteListQuery.getResultList();
-       if(favoriteListList.size() > 0) {
-        List<String> flist = new ArrayList<String>();
-        for(FavoriteList g: favoriteListList){
-            flist.add(g.getName());
+        // Ενημέρωση των δεδομένων 
+        genreList = genreQuery.getResultList();
+        if(genreList.size() > 0){
+             List<String> gelist = new ArrayList<String>();
+             for(Genre g: genreList){
+                 gelist.add(g.getName());
+             }
+             DefaultComboBoxModel gemodel = new DefaultComboBoxModel(gelist.toArray());
+             genreCombo.setModel(gemodel);
         }
-        DefaultComboBoxModel limodel = new DefaultComboBoxModel(flist.toArray());
-        listCombo.setModel(limodel);
-       }
-       
-       setInitialComponentsState();
+
+
+        favoriteListList = favoriteListQuery.getResultList();
+        if(favoriteListList.size() > 0) {
+         List<String> flist = new ArrayList<String>();
+         for(FavoriteList g: favoriteListList){
+             flist.add(g.getName());
+         }
+         DefaultComboBoxModel limodel = new DefaultComboBoxModel(flist.toArray());
+         listCombo.setModel(limodel);
+        }
+
+        setInitialComponentsState();
         
     }//GEN-LAST:event_formWindowGainedFocus
-
-    private void myListsComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_myListsComboBoxActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_myListsComboBoxActionPerformed
-
-    private void DeleteButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_DeleteButtonMouseClicked
-        // TODO add your handling code here:
-    }//GEN-LAST:event_DeleteButtonMouseClicked
 
     private void DeleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DeleteButtonActionPerformed
         if(listCombo.getSelectedIndex() == -1){
@@ -391,7 +364,36 @@ public class SearchForm extends javax.swing.JFrame {
        setSearchButtonStatus();
     }//GEN-LAST:event_genreComboActionPerformed
 
+    private void searchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchButtonActionPerformed
+        if(searchButton.isEnabled() == false){
+           JOptionPane.showMessageDialog(null,"Εισάγετε στοιχεία και στα δύο πεδία αναζήτησης");
+           return;
+        }
+        String genre = genreCombo.getSelectedItem().toString();
+        String year = yearTextField.getText();
+        
+        // ελέγχουμε ότι η χρονολογία είναι έγκυρη
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy", Locale.ENGLISH);   
+        Date date = null;
+        try {
+            if(Integer.parseInt(year) > 2100){
+                throw new Exception("Εισάγετε μία έγκυρη χρονολογία");
+            }
+            String dateInString = "1-Jan-" + year;
+            date = formatter.parse(dateInString);
+        } catch(Exception e) {
+            JOptionPane.showMessageDialog(null,e.getMessage());
+        } 
+        
+        updateTableData(date, genre);
+    }//GEN-LAST:event_searchButtonActionPerformed
+
+    private void clearButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearButtonActionPerformed
+        setInitialComponentsState();
+    }//GEN-LAST:event_clearButtonActionPerformed
+
     private void setSearchButtonStatus(){
+        // καθορίζεται η κατάσταση του κουμπιού της Αναζήτησης
         if(yearTextField.getText().isEmpty()){
             searchButton.setEnabled(false); // Απενεργοποίηση της αναζήτησης όταν είναι άδειο το έτος
         }else {
@@ -403,9 +405,12 @@ public class SearchForm extends javax.swing.JFrame {
     
     public void onSelectRow(){
        DeleteButton.setEnabled(false);
-       Integer id = Integer.parseInt(movieTable.getModel().getValueAt(movieTable.getSelectedRow(), 3).toString());
+       // παίρνουμε το id της ταινίας απο τον πίνακα
+       Integer modelIndex = movieTable.convertRowIndexToModel(movieTable.getSelectedRow());
+       Integer id = Integer.parseInt(movieTable.getModel().getValueAt(modelIndex, 3).toString());
        
-       System.out.println("Selected movie: " + id);
+       System.out.println("Selected movie: " + movieTable.getModel().getValueAt(modelIndex, 0).toString());
+       
        Movie m = em
                .createNamedQuery("Movie.findById", Movie.class)
                .setParameter("id", id)
@@ -413,6 +418,9 @@ public class SearchForm extends javax.swing.JFrame {
        
        listCombo.setEnabled(true);
        
+       // αν η ταινία ανήκει σε λίστα την δείχνουμε θέτωντας 
+       // το πεδίο των λιστών με την αντίστοιχη τιμή
+       // αλλίως με την κενή τιμή
        if(m.getFavoriteListId() != null){
            FavoriteList fl = m.getFavoriteListId();
            setSelectedList(fl);
@@ -427,24 +435,9 @@ public class SearchForm extends javax.swing.JFrame {
         listCombo.setEnabled(true);
         listCombo.setSelectedItem(fl.getName());
     }
-    
-   
-    public void updateTableData(String year, String genreName){
-        
-        SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy", Locale.ENGLISH);
-            
-        Date date = null;
-        try {
-            if(Integer.parseInt(year) > 2100){
-                throw new Exception("Εισάγετε μία έγκυρη χρονολογία");
-            }
-            String dateInString = "1-Jan-" + year;
-            date = formatter.parse(dateInString);
-        }
-        catch(Exception e) {
-            JOptionPane.showMessageDialog(null,e.getMessage());
-        } 
-
+      
+    public void updateTableData(Date date, String genreName){
+        // ενημέρωση των δεδομένων του πίνακα
         List<POJOS.Movie> movieList = em
                     .createQuery("SELECT m FROM Movie m WHERE m.genreId.name = :genreName and m.releaseDate >= :date")
                     .setParameter("genreName", genreName)
@@ -454,8 +447,9 @@ public class SearchForm extends javax.swing.JFrame {
         DefaultTableModel tableModel = new DefaultTableModel();
         tableModel.setColumnIdentifiers(new String[]{ "Τίτλος ταινίας", "Βαθμολογία", "Περιγραφή", "Id" });
         movieTable.setModel(tableModel);
-        movieTable.removeColumn(movieTable.getColumnModel().getColumn(3));
+        movieTable.removeColumn(movieTable.getColumnModel().getColumn(3)); // κρύβουμε το πεδίο του id
 
+        // δημιουργούμε την επιλογή της ταξινόμησης με βάση τη στήλης της βαθμολογίας
         TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<DefaultTableModel>(tableModel);
         sorter.setSortable(0, false);
         sorter.setSortable(2, false);
@@ -467,7 +461,8 @@ public class SearchForm extends javax.swing.JFrame {
         
     }
     
-     public void setInitialComponentsState(){
+    public void setInitialComponentsState(){
+        // καθαρισμός των πεδίων της φόρμας
         yearTextField.setText("");
 
         searchButton.setEnabled(false);

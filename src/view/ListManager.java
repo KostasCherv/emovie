@@ -185,7 +185,6 @@ public class ListManager extends javax.swing.JFrame {
             return;
         }
         String name = ListOfLists.getSelectedValue();
-        System.out.println(name);
         
         Object[] options = {"Αποθήκευση", "Ακύρωση"};
 
@@ -226,7 +225,7 @@ public class ListManager extends javax.swing.JFrame {
     }//GEN-LAST:event_EditButtonActionPerformed
 
     private void ListOfListsMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ListOfListsMouseClicked
-           setButtonsStatus();
+        setButtonsStatus();
     }//GEN-LAST:event_ListOfListsMouseClicked
 
     private void formWindowGainedFocus(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowGainedFocus
@@ -249,8 +248,8 @@ public class ListManager extends javax.swing.JFrame {
         }
         ListOfLists.setListData(arr);
     }
+  
     // μέθοδος διαγραφής λίστας
-    
     public void deleteFavoriteList(int i){
         String name = ListOfLists.getModel().getElementAt(i);
         int result = JOptionPane.showOptionDialog(null, "Διαγραφή της λίστας " + name, "Confirm",

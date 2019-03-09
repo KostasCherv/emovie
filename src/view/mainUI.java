@@ -201,8 +201,8 @@ public class mainUI extends javax.swing.JFrame {
     {
         Object[] options = {"OK","Άκυρο"};
         int result = JOptionPane.showOptionDialog( new JFrame(),
-                "Να γίνει τερματισμός της εφαρμογής;", "Έξοδος ", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE,null,options,options[0]
-                );
+            "Να γίνει τερματισμός της εφαρμογής;", "Έξοδος ", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE,null,options,options[0]
+        );
         
         if (result == JOptionPane.YES_OPTION)
             System.exit(0);
