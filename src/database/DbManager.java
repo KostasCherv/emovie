@@ -54,7 +54,13 @@ public class DbManager {
 
         em.getTransaction().begin();
         query.executeUpdate();
-        em.getTransaction().commit();  
+        em.getTransaction().commit();
+        
+        query = em.createNativeQuery("DELETE FROM FAVORITE_LIST");
+
+        em.getTransaction().begin();
+        query.executeUpdate();
+        em.getTransaction().commit();
 
         System.out.println("Tables Data deleted");
         

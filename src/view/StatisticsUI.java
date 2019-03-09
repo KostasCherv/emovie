@@ -24,6 +24,7 @@ public class StatisticsUI extends javax.swing.JFrame {
     public StatisticsUI() {
         initComponents();
         this.setLocationRelativeTo(null);
+        jPanel1.setFocusable(true);
         
         DefaultTableModel tableModel = new DefaultTableModel();
         tableModel.setColumnIdentifiers(new String[]{});
@@ -49,6 +50,11 @@ public class StatisticsUI extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         jPanel1.setBackground(new java.awt.Color(153, 153, 153));
+        jPanel1.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                jPanel1FocusGained(evt);
+            }
+        });
 
         top10Button.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         top10Button.setText("Οι Καλύτερες 10 Ταινίες");
@@ -130,15 +136,22 @@ public class StatisticsUI extends javax.swing.JFrame {
 
     private void top10ButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_top10ButtonActionPerformed
         System.out.println("top 10 movies");
+        topmoviesTable.setVisible(true);
         
         List <Movie> movieList = em.createNativeQuery("Select m.id, m.title, m.rating from Movie m order by rating DESC FETCH FIRST 10 ROWS ONLY", Movie.class).getResultList();
         
         DefaultTableModel tableModel = new DefaultTableModel();
-        tableModel.setColumnIdentifiers(new String[]{"Τίτλος ταινίας", "Βαθμολογία"});
-                
-        for (Movie m : movieList) {
-            tableModel.addRow(new String[]{m.getTitle(), m.getRating().toString()});
+        
+        if(movieList.size() == 0){
+            tableModel.setColumnIdentifiers(new String[]{"Μήνυμα"});
+            tableModel.addRow(new String[]{"Δεν βρέθηκαν ταινίες"});
+        }else {
+            tableModel.setColumnIdentifiers(new String[]{"Τίτλος ταινίας", "Βαθμολογία"});                
+            for (Movie m : movieList) {
+                tableModel.addRow(new String[]{m.getTitle(), m.getRating().toString()});
+            }
         }
+        
         
         topmoviesTable.setModel(tableModel);
 
@@ -146,20 +159,34 @@ public class StatisticsUI extends javax.swing.JFrame {
 
     private void topPerListButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_topPerListButtonActionPerformed
         System.out.println("top movies per list");
-                
+        topmoviesTable.setVisible(true);
+        
         List <Movie> movieList = em.createNativeQuery("select m.id, m.title from movie m where m.FAVORITE_LIST_ID is not null and m.rating = any\n" +
             "(select Max(M.RATING) from movie M where M.FAVORITE_LIST_ID = m.FAVORITE_LIST_ID group by M.FAVORITE_LIST_ID)", Movie.class).getResultList();
         
         DefaultTableModel tableModel = new DefaultTableModel();
-        tableModel.setColumnIdentifiers(new String[]{"Τίτλος ταινίας"});
         
-        for (Movie m : movieList) {
-            tableModel.addRow(new String[]{m.getTitle()});
-        }
+        if(movieList.size() == 0){                   
+            tableModel.setColumnIdentifiers(new String[]{"Μήνυμα"});
+            tableModel.addRow(new String[]{"Δεν βρέθηκε ταινία σε λίστα"});
+        } else {
+            tableModel.setColumnIdentifiers(new String[]{"Τίτλος ταινίας"});
+            for (Movie m : movieList) {
+                 tableModel.addRow(new String[]{m.getTitle()});
+            } 
+        }    
         
         topmoviesTable.setModel(tableModel);
-
     }//GEN-LAST:event_topPerListButtonActionPerformed
+
+    private void jPanel1FocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jPanel1FocusGained
+        // κρύβουμε τον πίνακα ώστε να μην φαίνονται μη ενημερωμένα δεδομένα
+        topmoviesTable.setVisible(false);
+        
+        DefaultTableModel tableModel = new DefaultTableModel();
+        tableModel.setColumnIdentifiers(new String[]{});
+        topmoviesTable.setModel(tableModel);
+    }//GEN-LAST:event_jPanel1FocusGained
 
     
 

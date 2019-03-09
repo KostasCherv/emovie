@@ -445,19 +445,29 @@ public class SearchForm extends javax.swing.JFrame {
                     .getResultList();
                       
         DefaultTableModel tableModel = new DefaultTableModel();
-        tableModel.setColumnIdentifiers(new String[]{ "Τίτλος ταινίας", "Βαθμολογία", "Περιγραφή", "Id" });
-        movieTable.setModel(tableModel);
-        movieTable.removeColumn(movieTable.getColumnModel().getColumn(3)); // κρύβουμε το πεδίο του id
-
-        // δημιουργούμε την επιλογή της ταξινόμησης με βάση τη στήλης της βαθμολογίας
         TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<DefaultTableModel>(tableModel);
-        sorter.setSortable(0, false);
-        sorter.setSortable(2, false);
-        movieTable.setRowSorter(sorter);
-        
-        for (POJOS.Movie m : movieList) {
-            tableModel.addRow(new String[]{ m.getTitle(), m.getRating().toString(), m.getOverview(), m.getId().toString()});
+
+        if(movieList.size() == 0 ){
+            tableModel.setColumnIdentifiers(new String[]{"Μήνυμα"});
+            tableModel.addRow(new String[]{"Δεν βρέθηκαν ταινίες"});
+            movieTable.setModel(tableModel);
+            movieTable.setRowSorter(sorter);
+            return;
+        }else {
+            tableModel.setColumnIdentifiers(new String[]{ "Τίτλος ταινίας", "Βαθμολογία", "Περιγραφή", "Id" });
+            movieTable.setModel(tableModel);
+            movieTable.removeColumn(movieTable.getColumnModel().getColumn(3)); // κρύβουμε το πεδίο του id
+
+            // δημιουργούμε την επιλογή της ταξινόμησης με βάση τη στήλης της βαθμολογίας
+            sorter.setSortable(0, false);
+            sorter.setSortable(2, false);
+            movieTable.setRowSorter(sorter);
+
+            for (POJOS.Movie m : movieList) {
+                tableModel.addRow(new String[]{ m.getTitle(), m.getRating().toString(), m.getOverview(), m.getId().toString()});
+            }         
         }
+        
         
     }
     
