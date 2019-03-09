@@ -42,9 +42,11 @@ public class SearchForm extends javax.swing.JFrame {
         this.setLocationRelativeTo(null);
         
         setInitialComponentsState();
- 
+        
+        
         movieTable.getSelectionModel().addListSelectionListener(new ListSelectionListener(){
             public void valueChanged(ListSelectionEvent event) {
+                if(event.getValueIsAdjusting() == true) return; // Μη κάνεις καμία ενέργεια αν δεν αλλάξει η τιμή
                 if(movieTable.getSelectedRowCount() == 0) return;
                 onSelectRow();
             }
@@ -55,8 +57,7 @@ public class SearchForm extends javax.swing.JFrame {
                 JList list, Object value, int index, boolean isSelected, boolean cellHasFocus){
                 super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 
-                if (value instanceof FavoriteList)
-                {
+                if (value instanceof FavoriteList){
                     FavoriteList foo = (FavoriteList)value;
                     setText( foo.getName() );
                 }
@@ -69,8 +70,7 @@ public class SearchForm extends javax.swing.JFrame {
                 JList list, Object value, int index, boolean isSelected, boolean cellHasFocus){
                 super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 
-                if (value instanceof Genre)
-                {
+                if (value instanceof Genre)                {
                     Genre foo = (Genre)value;
                     setText( foo.getName() );
                 }
@@ -162,11 +162,6 @@ public class SearchForm extends javax.swing.JFrame {
                 searchButtonMouseClicked(evt);
             }
         });
-        searchButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                searchButtonActionPerformed(evt);
-            }
-        });
 
         jScrollPane1.setBackground(new java.awt.Color(153, 153, 153));
 
@@ -178,11 +173,6 @@ public class SearchForm extends javax.swing.JFrame {
         jComboBoxBinding = org.jdesktop.swingbinding.SwingBindings.createJComboBoxBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, favoriteListList, listCombo);
         bindingGroup.addBinding(jComboBoxBinding);
 
-        listCombo.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                listComboMouseClicked(evt);
-            }
-        });
         listCombo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 listComboActionPerformed(evt);
@@ -380,8 +370,12 @@ public class SearchForm extends javax.swing.JFrame {
                 .createNamedQuery("Movie.findById", Movie.class)
                 .setParameter("id", id)
                 .getSingleResult();
-
+        
+        if(m.getFavoriteListId() == fl){
+            return; // Καμία ενέργεια εάν η ταινία είναι ήδη σε αυτή τη λίστα
+        }
         em.getTransaction().begin();
+        
         m.setFavoriteListId(fl);
         em.persist(m);
         em.getTransaction().commit();
@@ -392,18 +386,10 @@ public class SearchForm extends javax.swing.JFrame {
         DeleteButton.setEnabled(true);
     }//GEN-LAST:event_listComboActionPerformed
 
-    private void listComboMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_listComboMouseClicked
-        // TODO add your handling code here:
-    }//GEN-LAST:event_listComboMouseClicked
-
     private void genreComboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_genreComboActionPerformed
         // TODO add your handling code here:
        setSearchButtonStatus();
     }//GEN-LAST:event_genreComboActionPerformed
-
-    private void searchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchButtonActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_searchButtonActionPerformed
 
     private void setSearchButtonStatus(){
         if(yearTextField.getText().isEmpty()){
@@ -417,7 +403,6 @@ public class SearchForm extends javax.swing.JFrame {
     
     public void onSelectRow(){
        DeleteButton.setEnabled(false);
-        
        Integer id = Integer.parseInt(movieTable.getModel().getValueAt(movieTable.getSelectedRow(), 3).toString());
        
        System.out.println("Selected movie: " + id);
